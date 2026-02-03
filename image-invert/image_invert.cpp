@@ -41,6 +41,18 @@ extern "C"
 {
 
     /**
+     * Initialize the plugin (called once after loading)
+     */
+    UNICONV_EXPORT int uniconv_plugin_init(void)
+    {
+#ifdef HAS_VIPS
+        if (VIPS_INIT("image-invert"))
+            return 1;
+#endif
+        return 0;
+    }
+
+    /**
      * Return plugin information
      */
     UNICONV_EXPORT UniconvPluginInfo *uniconv_plugin_info(void)
