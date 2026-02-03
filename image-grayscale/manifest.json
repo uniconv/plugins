@@ -1,0 +1,25 @@
+{
+  "name": "image-grayscale",
+  "description": "Convert images to grayscale using Python/Pillow",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": ["image", "grayscale", "filter", "conversion"],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        { "name": "python3", "type": "system", "version": ">=3.8" },
+        { "name": "Pillow", "type": "python", "version": ">=9.0" }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-grayscale-v1.0.0/image-grayscale-1.0.0.tar.gz",
+          "sha256": "fc1822fe9bb2b45c40f5613df372d980d4188eff03e3bccd09fd02c37922ff06"
+        }
+      }
+    }
+  ]
+}
