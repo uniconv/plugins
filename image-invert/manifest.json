@@ -11,7 +11,7 @@
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
       "dependencies": [
-        { "name": "libvips-dev", "type": "system", "check": "pkg-config --exists vips-cpp" }
+        { "name": "libvips", "type": "system", "check": "ldconfig -p | grep -q libvips" }
       ],
       "artifact": {
         "linux-x86_64": {

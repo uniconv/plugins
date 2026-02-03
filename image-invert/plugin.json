@@ -11,6 +11,6 @@
   "output_types": ["image"],
   "options": [],
   "dependencies": [
-    { "name": "libvips-dev", "type": "system", "check": "pkg-config --exists vips-cpp" }
+    { "name": "libvips", "type": "system", "check": "ldconfig -p | grep -q libvips" }
   ]
 }
