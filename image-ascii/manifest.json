@@ -1,0 +1,25 @@
+{
+  "name": "image-ascii",
+  "description": "Convert images to ASCII art using Python/Pillow",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": ["image", "ascii", "text-art", "conversion"],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        { "name": "python3", "type": "system", "version": ">=3.8" },
+        { "name": "Pillow", "type": "python", "version": ">=9.0" }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-ascii-v1.0.0/image-ascii-1.0.0.tar.gz",
+          "sha256": "2e1e87baf7dab7c258ecb34981dc44d6de4557a72f35034d4a11ff62ab49d7d6"
+        }
+      }
+    }
+  ]
+}
