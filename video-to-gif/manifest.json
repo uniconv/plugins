@@ -1,0 +1,36 @@
+{
+  "name": "video-to-gif",
+  "description": "Convert video files to animated GIF using FFmpeg",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": ["video", "gif", "animation", "conversion", "ffmpeg"],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        { "name": "libavformat-dev", "type": "system", "check": "pkg-config --exists libavformat" },
+        { "name": "libavcodec-dev", "type": "system", "check": "pkg-config --exists libavcodec" },
+        { "name": "libavutil-dev", "type": "system", "check": "pkg-config --exists libavutil" },
+        { "name": "libswscale-dev", "type": "system", "check": "pkg-config --exists libswscale" },
+        { "name": "libavfilter-dev", "type": "system", "check": "pkg-config --exists libavfilter" }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-to-gif-v1.0.0/video-to-gif-1.0.0-linux-x86_64.tar.gz",
+          "sha256": "a4874641ae5de84e71ed6964d20418daf906722c1a4b4c0b2b677fcd619e9403"
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-to-gif-v1.0.0/video-to-gif-1.0.0-linux-aarch64.tar.gz",
+          "sha256": "PLACEHOLDER"
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-to-gif-v1.0.0/video-to-gif-1.0.0-darwin-aarch64.tar.gz",
+          "sha256": "PLACEHOLDER"
+        }
+      }
+    }
+  ]
+}
