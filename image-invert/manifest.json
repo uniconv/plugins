@@ -1,0 +1,32 @@
+{
+  "name": "image-invert",
+  "description": "Invert image colors (native C++ plugin)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": ["image", "invert", "negative", "filter"],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        { "name": "libvips-dev", "type": "system", "check": "pkg-config --exists vips-cpp" }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-invert-v1.0.0/image-invert-1.0.0-linux-x86_64.tar.gz",
+          "sha256": "a6f6d9d44b7d38e0d75da0b022035d338e002579887ca3a81c1fe6df0f36e93e"
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-invert-v1.0.0/image-invert-1.0.0-linux-aarch64.tar.gz",
+          "sha256": "PLACEHOLDER"
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-invert-v1.0.0/image-invert-1.0.0-darwin-aarch64.tar.gz",
+          "sha256": "PLACEHOLDER"
+        }
+      }
+    }
+  ]
+}
