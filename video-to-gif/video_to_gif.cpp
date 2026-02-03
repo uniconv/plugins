@@ -679,6 +679,12 @@ namespace
 extern "C"
 {
 
+    UNICONV_EXPORT int uniconv_plugin_init(void)
+    {
+        avformat_network_init();
+        return 0;
+    }
+
     UNICONV_EXPORT UniconvPluginInfo *uniconv_plugin_info(void)
     {
         return &plugin_info;
