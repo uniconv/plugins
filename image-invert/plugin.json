@@ -10,7 +10,5 @@
   "input_types": ["image", "file"],
   "output_types": ["image"],
   "options": [],
-  "dependencies": [
-    { "name": "libvips", "type": "system", "check": "ldconfig -p | grep -q libvips" }
-  ]
+  "dependencies": []
 }
