@@ -1364,6 +1364,17 @@ extern "C"
             return result;
         }
 
+        // Set FFmpeg log level based on verbose core option
+        std::string verbose = get_option(request, "verbose");
+        if (verbose == "true")
+        {
+            av_log_set_level(AV_LOG_INFO);
+        }
+        else
+        {
+            av_log_set_level(AV_LOG_QUIET);
+        }
+
         std::string source_path = request->source;
 
         // Check input file exists
