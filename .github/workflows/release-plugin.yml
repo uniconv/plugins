@@ -32,7 +32,7 @@ jobs:
       - name: Detect plugin interface
         id: detect
         run: |
-          PLUGIN_JSON="plugins/${{ steps.parse.outputs.name }}/plugin.json"
+          PLUGIN_JSON="${{ steps.parse.outputs.name }}/plugin.json"
           if [[ ! -f "$PLUGIN_JSON" ]]; then
             echo "ERROR: $PLUGIN_JSON not found" >&2
             exit 1
@@ -49,13 +49,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Package CLI plugin
-        run: plugins/package.sh ${{ needs.detect.outputs.name }}
+        run: ./package.sh ${{ needs.detect.outputs.name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: plugin-cli
-          path: plugins/dist/*.tar.gz
+          path: dist/*.tar.gz
 
   build-native:
     needs: detect
@@ -95,19 +95,19 @@ jobs:
 
       - name: Build native plugin
         run: |
-          cd plugins/${{ needs.detect.outputs.name }}
+          cd ${{ needs.detect.outputs.name }}
           mkdir -p build && cd build
-          cmake ..
+          cmake -DUNICONV_INCLUDE_DIR=${{ github.workspace }}/uniconv/include ..
           cmake --build .
 
       - name: Package native plugin
-        run: PLATFORM=${{ matrix.platform }} plugins/package.sh ${{ needs.detect.outputs.name }}
+        run: PLATFORM=${{ matrix.platform }} ./package.sh ${{ needs.detect.outputs.name }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: plugin-${{ matrix.platform }}
-          path: plugins/dist/*.tar.gz
+          path: dist/*.tar.gz
 
   release:
     needs: [detect, build-cli, build-native]
@@ -133,3 +133,66 @@ jobs:
           files: |
             artifacts/*.tar.gz
             artifacts/checksums-sha256.txt
+
+  update-manifest:
+    needs: [detect, release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Update manifest SHA256
+        run: |
+          NAME="${{ needs.detect.outputs.name }}"
+          VERSION="${{ needs.detect.outputs.version }}"
+
+          python3 -c "
+          import json, sys, os
+
+          name = sys.argv[1]
+          version = sys.argv[2]
+
+          # Parse checksums
+          checksums = {}
+          with open('artifacts/checksums-sha256.txt') as f:
+              for line in f:
+                  parts = line.strip().split()
+                  if len(parts) == 2:
+                      checksums[parts[1]] = parts[0]
+
+          # Update manifest
+          manifest_path = f'{name}/manifest.json'
+          with open(manifest_path) as f:
+              manifest = json.load(f)
+
+          for release in manifest['releases']:
+              if release['version'] == version:
+                  for platform_key, artifact in release['artifact'].items():
+                      url = artifact['url']
+                      filename = url.rsplit('/', 1)[-1]
+                      if filename in checksums:
+                          artifact['sha256'] = checksums[filename]
+                          print(f'  {platform_key}: {checksums[filename]}')
+                  break
+
+          with open(manifest_path, 'w') as f:
+              json.dump(manifest, f, indent=2)
+              f.write('\n')
+          " "$NAME" "$VERSION"
+
+      - name: Commit and push
+        run: |
+          NAME="${{ needs.detect.outputs.name }}"
+          VERSION="${{ needs.detect.outputs.version }}"
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add "$NAME/manifest.json"
+          git diff --cached --quiet && echo 'No changes to commit' || \
+            (git commit -m "chore($NAME): update SHA256 for v$VERSION" && git push)

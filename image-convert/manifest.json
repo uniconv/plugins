@@ -28,7 +28,7 @@
       "artifact": {
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.0/image-convert-1.0.0-darwin-aarch64.tar.gz",
-          "sha256": "efa03db567fd8cd51b9cfdd2e204d18b66646653feff835e9ee34452a2524eeb"
+          "sha256": "8ffd50c3b6238724a7dc194565000e0f2e8579b93f4dbc0990867a91511f76f3"
         },
         "linux-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.0/image-convert-1.0.0-linux-x86_64.tar.gz",
