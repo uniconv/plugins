@@ -1,25 +1,36 @@
 {
   "name": "video-convert",
   "scope": "video-convert",
-  "version": "1.0.0",
-  "description": "Convert video formats",
+  "version": "1.1.0",
+  "description": "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
   "interface": "native",
   "library": "libvideo_convert",
-  "targets": ["gif"],
-  "input_formats": ["mp4", "mov", "avi", "webm", "mkv", "m4v"],
+  "targets": ["mp4", "mov", "avi", "webm", "mkv", "m4v", "gif"],
+  "input_formats": ["mp4", "mov", "avi", "webm", "mkv", "m4v", "gif"],
   "input_types": ["video", "file"],
-  "output_types": ["image"],
+  "output_types": ["video", "image"],
   "options": [
     {
       "name": "--fps",
       "type": "int",
-      "default": "10",
-      "description": "Output frames per second (1-30)"
+      "default": "0",
+      "description": "Output frames per second (0 = keep original; default 10 for GIF)"
     },
     {
       "name": "--width",
       "type": "int",
       "description": "Output width in pixels (height auto-scaled to preserve aspect ratio)"
+    },
+    {
+      "name": "--height",
+      "type": "int",
+      "description": "Output height in pixels (width auto-scaled to preserve aspect ratio)"
+    },
+    {
+      "name": "--quality",
+      "type": "int",
+      "default": "75",
+      "description": "Output quality (1-100, higher is better)"
     },
     {
       "name": "--start",
@@ -35,7 +46,7 @@
       "name": "--loop",
       "type": "int",
       "default": "0",
-      "description": "Number of loops (0 = infinite)"
+      "description": "Number of loops for GIF (0 = infinite)"
     }
   ],
   "dependencies": [
