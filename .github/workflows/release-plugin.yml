@@ -69,7 +69,12 @@ jobs:
             platform: linux-aarch64
           - runner: macos-latest
             platform: darwin-aarch64
+          - runner: windows-latest
+            platform: windows-x86_64
     runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform == 'windows-x86_64' && 'msys2 {0}' || 'bash' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -79,8 +84,22 @@ jobs:
           repository: uniconv/uniconv
           path: uniconv
 
+      - name: Setup MSYS2 (Windows)
+        if: matrix.platform == 'windows-x86_64'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-ffmpeg
+            mingw-w64-x86_64-libvips
+
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -91,13 +110,24 @@ jobs:
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
+        shell: bash
         run: brew install pkg-config vips ffmpeg
 
-      - name: Build native plugin
+      - name: Build native plugin (Unix)
+        if: matrix.platform != 'windows-x86_64'
         run: |
           cd ${{ needs.detect.outputs.name }}
           mkdir -p build && cd build
           cmake -DUNICONV_INCLUDE_DIR=${{ github.workspace }}/uniconv/include ..
+          cmake --build .
+
+      - name: Build native plugin (Windows)
+        if: matrix.platform == 'windows-x86_64'
+        run: |
+          cd ${{ needs.detect.outputs.name }}
+          mkdir -p build && cd build
+          cmake -G "MinGW Makefiles" \
+            -DUNICONV_INCLUDE_DIR="$(cygpath -u '${{ github.workspace }}')/uniconv/include" ..
           cmake --build .
 
       - name: Package native plugin
