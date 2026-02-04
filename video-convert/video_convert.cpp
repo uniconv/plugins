@@ -51,7 +51,7 @@ static UniconvDataType output_types[] = {UNICONV_DATA_VIDEO, UNICONV_DATA_IMAGE,
 static UniconvPluginInfo plugin_info = {
     .name = "video-convert",
     .scope = "video-convert",
-    .version = "1.1.0",
+    .version = "1.1.2",
     .description = "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
     .targets = targets,
     .input_formats = input_formats,
@@ -884,15 +884,26 @@ namespace
             // Determine output pixel format
             AVPixelFormat out_pix_fmt = AV_PIX_FMT_YUV420P;
             {
-                const void *pix_fmt_list = nullptr;
-                int num_pix_fmts = 0;
+                const AVPixelFormat *fmts = nullptr;
+                int num_fmts = 0;
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 13, 100)
+                const void *fmt_list = nullptr;
                 if (avcodec_get_supported_config(nullptr, encoder, AV_CODEC_CONFIG_PIX_FORMAT,
-                                                  0, &pix_fmt_list, &num_pix_fmts) >= 0 &&
-                    pix_fmt_list && num_pix_fmts > 0)
+                                                  0, &fmt_list, &num_fmts) >= 0 && fmt_list)
                 {
-                    const AVPixelFormat *fmts = static_cast<const AVPixelFormat *>(pix_fmt_list);
+                    fmts = static_cast<const AVPixelFormat *>(fmt_list);
+                }
+#else
+                fmts = encoder->pix_fmts;
+                if (fmts)
+                {
+                    for (num_fmts = 0; fmts[num_fmts] != AV_PIX_FMT_NONE; num_fmts++) {}
+                }
+#endif
+                if (fmts && num_fmts > 0)
+                {
                     bool found = false;
-                    for (int i = 0; i < num_pix_fmts && fmts[i] != AV_PIX_FMT_NONE; i++)
+                    for (int i = 0; i < num_fmts && fmts[i] != AV_PIX_FMT_NONE; i++)
                     {
                         if (fmts[i] == AV_PIX_FMT_YUV420P)
                         {
