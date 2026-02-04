@@ -15,6 +15,15 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DIST_DIR="$SCRIPT_DIR/dist"
 
+# Portable sha256 computation (macOS lacks sha256sum)
+compute_sha256() {
+    if command -v sha256sum >/dev/null 2>&1; then
+        sha256sum "$1" | awk '{print $1}'
+    else
+        shasum -a 256 "$1" | awk '{print $1}'
+    fi
+}
+
 # Detect platform for native plugins
 detect_platform() {
     local os arch
@@ -50,7 +59,7 @@ package_cli_plugin() {
         -C "$SCRIPT_DIR" "$name/"
 
     local sha256
-    sha256=$(sha256sum "$tarball" | awk '{print $1}')
+    sha256=$(compute_sha256 "$tarball")
 
     echo "  -> $(basename "$tarball")"
     echo "  -> sha256: $sha256"
@@ -96,7 +105,7 @@ package_native_plugin() {
     rm -rf "$staging"
 
     local sha256
-    sha256=$(sha256sum "$tarball" | awk '{print $1}')
+    sha256=$(compute_sha256 "$tarball")
 
     echo "  -> $(basename "$tarball")"
     echo "  -> sha256: $sha256"

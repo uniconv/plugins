@@ -1,0 +1,135 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - '*-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.parse.outputs.name }}
+      version: ${{ steps.parse.outputs.version }}
+      interface: ${{ steps.detect.outputs.interface }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse tag
+        id: parse
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          # Split on last occurrence of -v to get name and version
+          NAME="${TAG%-v*}"
+          VERSION="${TAG##*-v}"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Parsed tag: name=$NAME version=$VERSION"
+
+      - name: Detect plugin interface
+        id: detect
+        run: |
+          PLUGIN_JSON="plugins/${{ steps.parse.outputs.name }}/plugin.json"
+          if [[ ! -f "$PLUGIN_JSON" ]]; then
+            echo "ERROR: $PLUGIN_JSON not found" >&2
+            exit 1
+          fi
+          INTERFACE=$(python3 -c "import json; print(json.load(open('$PLUGIN_JSON'))['interface'])")
+          echo "interface=$INTERFACE" >> "$GITHUB_OUTPUT"
+          echo "Detected interface: $INTERFACE"
+
+  build-cli:
+    needs: detect
+    if: needs.detect.outputs.interface == 'cli'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package CLI plugin
+        run: plugins/package.sh ${{ needs.detect.outputs.name }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-cli
+          path: plugins/dist/*.tar.gz
+
+  build-native:
+    needs: detect
+    if: needs.detect.outputs.interface == 'native'
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux-x86_64
+          - runner: ubuntu-24.04-arm
+            platform: linux-aarch64
+          - runner: macos-latest
+            platform: darwin-aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout uniconv core (for plugin_api.h)
+        uses: actions/checkout@v4
+        with:
+          repository: uniconv/uniconv
+          path: uniconv
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake build-essential pkg-config \
+            libvips-dev \
+            libavformat-dev libavcodec-dev libavutil-dev \
+            libswscale-dev libavfilter-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install pkg-config vips ffmpeg
+
+      - name: Build native plugin
+        run: |
+          cd plugins/${{ needs.detect.outputs.name }}
+          mkdir -p build && cd build
+          cmake ..
+          cmake --build .
+
+      - name: Package native plugin
+        run: PLATFORM=${{ matrix.platform }} plugins/package.sh ${{ needs.detect.outputs.name }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-${{ matrix.platform }}
+          path: plugins/dist/*.tar.gz
+
+  release:
+    needs: [detect, build-cli, build-native]
+    if: always() && (needs.build-cli.result == 'success' || needs.build-native.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Generate checksums
+        run: |
+          cd artifacts
+          sha256sum *.tar.gz > checksums-sha256.txt
+          cat checksums-sha256.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ needs.detect.outputs.name }} v${{ needs.detect.outputs.version }}
+          files: |
+            artifacts/*.tar.gz
+            artifacts/checksums-sha256.txt
