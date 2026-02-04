@@ -28,15 +28,15 @@
       "artifact": {
         "linux-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.3/image-convert-1.0.3-linux-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "c50979e8d723167b66669b0c951dd66bb2ea64f6cc1bd0f1492977bc9d559c38"
         },
         "linux-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.3/image-convert-1.0.3-linux-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "1568215429819c69cc60c74b972ec4f99c5863bcac07ad246970d3ea73a823b2"
         },
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.3/image-convert-1.0.3-darwin-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "0960bf9ee4d2e4bdfd9dd868e7d65205dd80593860481a9ba4de20d2fe93fed4"
         }
       }
     },
