@@ -134,19 +134,10 @@ jobs:
             artifacts/*.tar.gz
             artifacts/checksums-sha256.txt
 
-  update-manifest:
-    needs: [detect, release]
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
+          path: repo
 
       - name: Update manifest SHA256
         run: |
@@ -154,12 +145,11 @@ jobs:
           VERSION="${{ needs.detect.outputs.version }}"
 
           python3 -c "
-          import json, sys, os
+          import json, sys
 
           name = sys.argv[1]
           version = sys.argv[2]
 
-          # Parse checksums
           checksums = {}
           with open('artifacts/checksums-sha256.txt') as f:
               for line in f:
@@ -167,8 +157,7 @@ jobs:
                   if len(parts) == 2:
                       checksums[parts[1]] = parts[0]
 
-          # Update manifest
-          manifest_path = f'{name}/manifest.json'
+          manifest_path = f'repo/{name}/manifest.json'
           with open(manifest_path) as f:
               manifest = json.load(f)
 
@@ -187,8 +176,9 @@ jobs:
               f.write('\n')
           " "$NAME" "$VERSION"
 
-      - name: Commit and push
+      - name: Commit and push manifest update
         run: |
+          cd repo
           NAME="${{ needs.detect.outputs.name }}"
           VERSION="${{ needs.detect.outputs.version }}"
           git config user.name 'github-actions[bot]'
