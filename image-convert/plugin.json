@@ -1,0 +1,35 @@
+{
+  "name": "image-convert",
+  "scope": "image-convert",
+  "version": "1.0.0",
+  "description": "Image format conversion using libvips",
+  "interface": "native",
+  "library": "libimage_convert",
+  "targets": ["jpg", "jpeg", "png", "webp", "pdf"],
+  "input_formats": ["heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff"],
+  "input_types": ["image", "file"],
+  "output_types": ["image"],
+  "options": [
+    {
+      "name": "--quality",
+      "short": "-q",
+      "type": "int",
+      "description": "Output quality (1-100)"
+    },
+    {
+      "name": "--width",
+      "short": "-w",
+      "type": "int",
+      "description": "Output width (aspect ratio preserved)"
+    },
+    {
+      "name": "--height",
+      "short": "-h",
+      "type": "int",
+      "description": "Output height (aspect ratio preserved)"
+    }
+  ],
+  "dependencies": [
+    { "name": "libvips-dev", "type": "system", "check": "pkg-config --exists vips-cpp" }
+  ]
+}

@@ -46,8 +46,8 @@ static UniconvDataType input_types[] = {UNICONV_DATA_VIDEO, UNICONV_DATA_FILE, (
 static UniconvDataType output_types[] = {UNICONV_DATA_IMAGE, (UniconvDataType)0};
 
 static UniconvPluginInfo plugin_info = {
-    .name = "video-to-gif",
-    .group = "video-to-gif",
+    .name = "video-convert",
+    .scope = "video-convert",
     .version = "1.0.0",
     .description = "Convert video to GIF using libav",
     .targets = targets,

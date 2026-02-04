@@ -1,0 +1,62 @@
+{
+  "name": "video-convert",
+  "description": "Convert video formats",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "video",
+    "gif",
+    "animation",
+    "conversion",
+    "ffmpeg"
+  ],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        {
+          "name": "libavformat-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavformat"
+        },
+        {
+          "name": "libavcodec-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavcodec"
+        },
+        {
+          "name": "libavutil-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavutil"
+        },
+        {
+          "name": "libswscale-dev",
+          "type": "system",
+          "check": "pkg-config --exists libswscale"
+        },
+        {
+          "name": "libavfilter-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavfilter"
+        }
+      ],
+      "artifact": {
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.0.0/video-convert-1.0.0-darwin-aarch64.tar.gz",
+          "sha256": "8c1dfd3928061fca4b6b4ed962920e4fd1150038abd822d53393243a690c4e2d"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.0.0/video-convert-1.0.0-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.0.0/video-convert-1.0.0-linux-aarch64.tar.gz",
+          "sha256": ""
+        }
+      }
+    }
+  ]
+}

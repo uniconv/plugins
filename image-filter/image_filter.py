@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 """
-uniconv CLI Plugin: image-grayscale
+uniconv CLI Plugin: image-filter
 
-Converts images to grayscale using Python/Pillow.
+Applies image filters (grayscale, invert) using Python/Pillow.
 
 Usage:
-    grayscale.py --input <file> --target <format> [--output <file>] [options]
+    image_filter.py --input <file> --target <filter> [--output <file>] [options]
+
+Supported targets:
+    grayscale, gray, bw  - Convert to grayscale
+    invert, negative     - Invert image colors
 
 Plugin options:
-    --method <method>  Conversion method: luminosity, average, lightness (default: luminosity)
+    --method <method>  Grayscale conversion method: luminosity, average, lightness
+                       (only applies to grayscale targets; default: luminosity)
+    --quality <int>    Output quality 1-100 (default: 85)
+    --width <int>      Output width in pixels
+    --height <int>     Output height in pixels
 """
 
 import argparse
@@ -16,18 +24,22 @@ import json
 import sys
 import os
 
+
+GRAYSCALE_TARGETS = {'grayscale', 'gray', 'bw'}
+INVERT_TARGETS = {'invert', 'negative'}
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Convert image to grayscale')
+    parser = argparse.ArgumentParser(description='Apply image filters')
 
     # Universal arguments (passed by uniconv core to ALL plugins)
     parser.add_argument('--input', required=True, help='Input file path')
-    parser.add_argument('--target', required=True, help='Target format')
+    parser.add_argument('--target', required=True, help='Target filter')
     parser.add_argument('--output', help='Output file path')
     parser.add_argument('--force', action='store_true', help='Overwrite existing')
     parser.add_argument('--dry-run', action='store_true', help='Dry run mode')
 
-    # Plugin-specific options (declared in manifest, passed after --)
-    # Image plugins declare these; audio plugins would declare --bitrate, etc.
+    # Plugin-specific options
     parser.add_argument('--quality', type=int, default=85, help='Output quality (1-100)')
     parser.add_argument('--width', type=int, help='Output width')
     parser.add_argument('--height', type=int, help='Output height')
@@ -39,7 +51,7 @@ def main():
 
     # Check if Pillow is available
     try:
-        from PIL import Image
+        from PIL import Image, ImageOps
     except ImportError:
         result = {
             "success": False,
@@ -57,6 +69,16 @@ def main():
         print(json.dumps(result))
         return 1
 
+    # Validate target
+    target_lower = args.target.lower()
+    if target_lower not in GRAYSCALE_TARGETS and target_lower not in INVERT_TARGETS:
+        result = {
+            "success": False,
+            "error": f"Unknown target: {args.target}. Supported: grayscale, gray, bw, invert, negative"
+        }
+        print(json.dumps(result))
+        return 1
+
     # Get input file extension (preserve format)
     _, input_ext = os.path.splitext(args.input)
     if not input_ext:
@@ -67,7 +89,6 @@ def main():
 
     # Determine output path
     if args.output:
-        # Add suffix and preserve input extension
         base, _ = os.path.splitext(args.output)
         output_path = f"{base}{target_suffix}{input_ext}"
     else:
@@ -88,7 +109,7 @@ def main():
         result = {
             "success": True,
             "output": output_path,
-            "extra": {"dry_run": True}
+            "extra": {"dry_run": True, "filter": target_lower}
         }
         print(json.dumps(result))
         return 0
@@ -97,33 +118,25 @@ def main():
         # Open image
         img = Image.open(args.input)
 
-        # Convert to grayscale based on method
-        if args.method == 'luminosity':
-            # Standard grayscale (ITU-R 601-2 luma transform)
-            gray = img.convert('L')
-        elif args.method == 'average':
-            # Simple average of RGB channels
-            import numpy as np
-            if img.mode != 'RGB':
-                img = img.convert('RGB')
-            arr = np.array(img)
-            avg = arr.mean(axis=2).astype(np.uint8)
-            gray = Image.fromarray(avg, mode='L')
-        else:  # lightness
-            # Use lightness from HSL
-            img_rgb = img.convert('RGB')
-            gray = img_rgb.convert('L')  # Simplified; true lightness would need HSL conversion
+        if target_lower in GRAYSCALE_TARGETS:
+            # Grayscale conversion
+            processed = apply_grayscale(img, args.method)
+            filter_name = "grayscale"
+        else:
+            # Invert conversion
+            processed = apply_invert(img)
+            filter_name = "invert"
 
         # Resize if specified
         if args.width or args.height:
             w = args.width or int(img.width * (args.height / img.height))
             h = args.height or int(img.height * (args.width / img.width))
-            gray = gray.resize((w, h), Image.Resampling.LANCZOS)
+            processed = processed.resize((w, h), Image.Resampling.LANCZOS)
 
-        # Convert back to RGB if saving as jpg (jpg doesn't support grayscale well)
+        # Convert back to RGB if saving as jpg (jpg doesn't support grayscale/palette well)
         output_ext = os.path.splitext(output_path)[1].lower()
-        if output_ext in ['.jpg', '.jpeg']:
-            gray = gray.convert('RGB')
+        if output_ext in ['.jpg', '.jpeg'] and processed.mode != 'RGB':
+            processed = processed.convert('RGB')
 
         # Save
         save_kwargs = {}
@@ -134,20 +147,24 @@ def main():
         elif output_ext == '.png':
             save_kwargs['compress_level'] = 9 - (args.quality * 9 // 100)
 
-        gray.save(output_path, **save_kwargs)
+        processed.save(output_path, **save_kwargs)
 
         # Get output size
         output_size = os.path.getsize(output_path)
+
+        extra = {
+            "filter": filter_name,
+            "original_size": [img.width, img.height],
+            "output_size_px": [processed.width, processed.height]
+        }
+        if filter_name == "grayscale":
+            extra["method"] = args.method
 
         result = {
             "success": True,
             "output": output_path,
             "output_size": output_size,
-            "extra": {
-                "method": args.method,
-                "original_size": [img.width, img.height],
-                "output_size_px": [gray.width, gray.height]
-            }
+            "extra": extra
         }
         print(json.dumps(result))
         return 0
@@ -159,6 +176,46 @@ def main():
         }
         print(json.dumps(result))
         return 1
+
+
+def apply_grayscale(img, method):
+    """Apply grayscale conversion using the specified method."""
+    if method == 'luminosity':
+        # Standard grayscale (ITU-R 601-2 luma transform)
+        return img.convert('L')
+    elif method == 'average':
+        # Simple average of RGB channels
+        import numpy as np
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
+        arr = np.array(img)
+        avg = arr.mean(axis=2).astype(np.uint8)
+        from PIL import Image
+        return Image.fromarray(avg, mode='L')
+    else:  # lightness
+        img_rgb = img.convert('RGB')
+        return img_rgb.convert('L')
+
+
+def apply_invert(img):
+    """Invert image colors using Pillow's ImageOps."""
+    from PIL import ImageOps
+
+    # Ensure image is in a mode that supports inversion
+    if img.mode == 'RGBA':
+        # Split alpha, invert RGB, recombine
+        r, g, b, a = img.split()
+        from PIL import Image
+        rgb = Image.merge('RGB', (r, g, b))
+        inverted_rgb = ImageOps.invert(rgb)
+        ir, ig, ib = inverted_rgb.split()
+        return Image.merge('RGBA', (ir, ig, ib, a))
+    elif img.mode in ('RGB', 'L'):
+        return ImageOps.invert(img)
+    else:
+        # Convert to RGB, invert, return
+        return ImageOps.invert(img.convert('RGB'))
+
 
 if __name__ == '__main__':
     sys.exit(main())

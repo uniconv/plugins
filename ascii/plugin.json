@@ -1,8 +1,8 @@
 {
-  "name": "image-ascii",
-  "group": "image-ascii",
+  "name": "ascii",
+  "scope": "ascii",
   "version": "1.0.0",
-  "description": "Convert images to ASCII art using Python/Pillow",
+  "description": "Convert media to ASCII representation",
   "interface": "cli",
   "executable": "ascii.py",
   "targets": ["ascii", "ascii-art", "text-art"],

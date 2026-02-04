@@ -1,0 +1,44 @@
+{
+  "name": "image-convert",
+  "description": "Image format conversion using libvips",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "image",
+    "vips",
+    "jpg",
+    "png",
+    "webp",
+    "heic",
+    "conversion"
+  ],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        {
+          "name": "libvips-dev",
+          "type": "system",
+          "check": "pkg-config --exists vips-cpp"
+        }
+      ],
+      "artifact": {
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.0/image-convert-1.0.0-darwin-aarch64.tar.gz",
+          "sha256": "efa03db567fd8cd51b9cfdd2e204d18b66646653feff835e9ee34452a2524eeb"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.0/image-convert-1.0.0-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.0/image-convert-1.0.0-linux-aarch64.tar.gz",
+          "sha256": ""
+        }
+      }
+    }
+  ]
+}

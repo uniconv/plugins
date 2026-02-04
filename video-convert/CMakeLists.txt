@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(video-to-gif-plugin VERSION 1.0.0 LANGUAGES C CXX)
+project(video-convert-plugin VERSION 1.0.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,9 +17,9 @@ pkg_check_modules(SWSCALE REQUIRED libswscale)
 pkg_check_modules(AVFILTER REQUIRED libavfilter)
 
 # Build shared library
-add_library(video_to_gif SHARED video_to_gif.cpp)
+add_library(video_convert SHARED video_convert.cpp)
 
-target_include_directories(video_to_gif PRIVATE
+target_include_directories(video_convert PRIVATE
     ${UNICONV_INCLUDE_DIR}
     ${AVFORMAT_INCLUDE_DIRS}
     ${AVCODEC_INCLUDE_DIRS}
@@ -28,7 +28,7 @@ target_include_directories(video_to_gif PRIVATE
     ${AVFILTER_INCLUDE_DIRS}
 )
 
-target_link_directories(video_to_gif PRIVATE
+target_link_directories(video_convert PRIVATE
     ${AVFORMAT_LIBRARY_DIRS}
     ${AVCODEC_LIBRARY_DIRS}
     ${AVUTIL_LIBRARY_DIRS}
@@ -36,7 +36,7 @@ target_link_directories(video_to_gif PRIVATE
     ${AVFILTER_LIBRARY_DIRS}
 )
 
-target_link_libraries(video_to_gif PRIVATE
+target_link_libraries(video_convert PRIVATE
     ${AVFORMAT_LIBRARIES}
     ${AVCODEC_LIBRARIES}
     ${AVUTIL_LIBRARIES}
@@ -45,13 +45,13 @@ target_link_libraries(video_to_gif PRIVATE
 )
 
 # Set output name
-set_target_properties(video_to_gif PROPERTIES
+set_target_properties(video_convert PROPERTIES
     PREFIX "lib"
-    OUTPUT_NAME "video_to_gif"
+    OUTPUT_NAME "video_convert"
 )
 
 # Install to plugin directory
-install(TARGETS video_to_gif
+install(TARGETS video_convert
     LIBRARY DESTINATION .
     RUNTIME DESTINATION .
 )

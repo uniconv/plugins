@@ -5,10 +5,10 @@ set -euo pipefail
 #
 # Usage:
 #   ./package.sh              # Package all plugins
-#   ./package.sh image-ascii  # Package a specific plugin
+#   ./package.sh ascii        # Package a specific plugin
 #
 # For native plugins, pass the platform explicitly:
-#   PLATFORM=darwin-aarch64 ./package.sh image-invert
+#   PLATFORM=darwin-aarch64 ./package.sh video-convert
 #
 # Output goes to dist/
 

@@ -1,11 +1,11 @@
 {
-  "name": "image-grayscale",
-  "group": "image-grayscale",
+  "name": "image-filter",
+  "scope": "image-filter",
   "version": "1.0.0",
-  "description": "Convert images to grayscale using Python/Pillow",
+  "description": "Apply image filters (grayscale, invert) using Python/Pillow",
   "interface": "cli",
-  "executable": "grayscale.py",
-  "targets": ["grayscale", "gray", "bw"],
+  "executable": "image_filter.py",
+  "targets": ["grayscale", "gray", "bw", "invert", "negative"],
   "input_formats": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],
   "input_types": ["image", "file"],
   "output_types": ["image"],
@@ -30,7 +30,7 @@
       "name": "--method",
       "type": "string",
       "default": "luminosity",
-      "description": "Grayscale conversion method: luminosity, average, or lightness"
+      "description": "Grayscale conversion method: luminosity, average, or lightness (only applies to grayscale targets)"
     }
   ],
   "dependencies": [

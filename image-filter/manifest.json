@@ -1,0 +1,39 @@
+{
+  "name": "image-filter",
+  "description": "Apply image filters (grayscale, invert) using Python/Pillow",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "image",
+    "grayscale",
+    "invert",
+    "filter",
+    "conversion"
+  ],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8"
+        },
+        {
+          "name": "Pillow",
+          "type": "python",
+          "version": ">=9.0"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-filter-v1.0.0/image-filter-1.0.0.tar.gz",
+          "sha256": "6f5111b6779fc185f91e3d43b064594aaab39418a3bdd6f0ee8fcd2ca34a55de"
+        }
+      }
+    }
+  ]
+}

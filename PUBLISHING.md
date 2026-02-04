@@ -35,13 +35,13 @@ The publishing workflow is:
 ### Package a specific plugin
 
 ```bash
-./package.sh image-grayscale
+./package.sh image-filter
 ```
 
 ### Native plugins on a different platform
 
 ```bash
-PLATFORM=darwin-aarch64 ./package.sh image-invert
+PLATFORM=darwin-aarch64 ./package.sh video-convert
 ```
 
 Output goes to `dist/`. Each tarball gets a `.sha256` sidecar file.
@@ -49,13 +49,13 @@ Output goes to `dist/`. Each tarball gets a `.sha256` sidecar file.
 **CLI plugins** produce platform-independent tarballs:
 
 ```
-dist/image-grayscale-1.0.0.tar.gz
+dist/image-filter-1.0.0.tar.gz
 ```
 
 **Native plugins** produce platform-specific tarballs:
 
 ```
-dist/image-invert-1.0.0-linux-x86_64.tar.gz
+dist/video-convert-1.0.0-linux-x86_64.tar.gz
 ```
 
 ### Native plugin build (required before packaging)
@@ -63,7 +63,7 @@ dist/image-invert-1.0.0-linux-x86_64.tar.gz
 Native plugins must be compiled before running `package.sh`:
 
 ```bash
-cd image-invert
+cd video-convert
 mkdir -p build && cd build
 cmake ..
 cmake --build .
@@ -74,23 +74,23 @@ cmake --build .
 Create a release with a tag matching `<plugin-name>-v<version>` and attach the tarball:
 
 ```bash
-gh release create image-grayscale-v1.0.0 \
+gh release create image-filter-v1.0.0 \
   --repo uniconv/plugins \
-  --title "image-grayscale v1.0.0" \
-  --notes "CLI plugin that converts images to grayscale using Python/Pillow." \
-  dist/image-grayscale-1.0.0.tar.gz
+  --title "image-filter v1.0.0" \
+  --notes "CLI plugin that applies image filters (grayscale, invert) using Python/Pillow." \
+  dist/image-filter-1.0.0.tar.gz
 ```
 
 For native plugins with multiple platform builds, attach all tarballs to the same release:
 
 ```bash
-gh release create image-invert-v1.0.0 \
+gh release create video-convert-v1.0.0 \
   --repo uniconv/plugins \
-  --title "image-invert v1.0.0" \
-  --notes "Native C++ plugin that inverts image colors using libvips." \
-  dist/image-invert-1.0.0-linux-x86_64.tar.gz \
-  dist/image-invert-1.0.0-linux-aarch64.tar.gz \
-  dist/image-invert-1.0.0-darwin-aarch64.tar.gz
+  --title "video-convert v1.0.0" \
+  --notes "Native C++ plugin that converts video formats using FFmpeg." \
+  dist/video-convert-1.0.0-linux-x86_64.tar.gz \
+  dist/video-convert-1.0.0-linux-aarch64.tar.gz \
+  dist/video-convert-1.0.0-darwin-aarch64.tar.gz
 ```
 
 ## Step 3: Verify the SHA256 hash
@@ -98,12 +98,12 @@ gh release create image-invert-v1.0.0 \
 Download the release artifact and compute its hash:
 
 ```bash
-gh release download image-grayscale-v1.0.0 \
+gh release download image-filter-v1.0.0 \
   --repo uniconv/plugins \
   --pattern '*.tar.gz' \
   --dir /tmp
 
-sha256sum /tmp/image-grayscale-1.0.0.tar.gz
+sha256sum /tmp/image-filter-1.0.0.tar.gz
 ```
 
 Update the `sha256` field in the plugin's `manifest.json` to match this value. The hash must match the actual uploaded artifact, not the local tarball (timestamps in tar can cause differences across builds).
@@ -121,23 +121,23 @@ The [uniconv/registry](https://github.com/uniconv/registry) repo contains:
 # Clone or use existing checkout of uniconv/registry
 cd /path/to/uniconv-registry
 
-git checkout -b plugin/image-grayscale main
+git checkout -b plugin/image-filter main
 
 # Copy the manifest
-mkdir -p plugins/image-grayscale
-cp /path/to/uniconv-plugins/image-grayscale/manifest.json plugins/image-grayscale/manifest.json
+mkdir -p plugins/image-filter
+cp /path/to/uniconv-plugins/image-filter/manifest.json plugins/image-filter/manifest.json
 
 # Commit and push
-git add plugins/image-grayscale/manifest.json
-git commit -m "Add image-grayscale plugin v1.0.0"
-git push -u origin plugin/image-grayscale
+git add plugins/image-filter/manifest.json
+git commit -m "Add image-filter plugin v1.0.0"
+git push -u origin plugin/image-filter
 
 # Create PR
 gh pr create --repo uniconv/registry \
-  --head plugin/image-grayscale \
+  --head plugin/image-filter \
   --base main \
-  --title "Add image-grayscale plugin v1.0.0" \
-  --body "Adds image-grayscale CLI plugin v1.0.0 to the registry."
+  --title "Add image-filter plugin v1.0.0" \
+  --body "Adds image-filter CLI plugin v1.0.0 to the registry."
 ```
 
 ### Update index.json
@@ -146,8 +146,8 @@ Submit a separate PR to add the plugin entry to `index.json`:
 
 ```json
 {
-  "name": "image-grayscale",
-  "description": "Convert images to grayscale using Python/Pillow",
+  "name": "image-filter",
+  "description": "Apply image filters (grayscale, invert) using Python/Pillow",
   "keywords": ["image", "grayscale", "filter", "python"],
   "latest": "1.0.0",
   "author": "uniconv",
@@ -161,8 +161,8 @@ Submit a separate PR to add the plugin entry to `index.json`:
 
 ```json
 {
-  "name": "image-grayscale",
-  "description": "Convert images to grayscale using Python/Pillow",
+  "name": "image-filter",
+  "description": "Apply image filters (grayscale, invert) using Python/Pillow",
   "author": "uniconv",
   "license": "MIT",
   "repository": "https://github.com/uniconv/plugins",
@@ -178,7 +178,7 @@ Submit a separate PR to add the plugin entry to `index.json`:
       ],
       "artifact": {
         "any": {
-          "url": "https://github.com/uniconv/plugins/releases/download/image-grayscale-v1.0.0/image-grayscale-1.0.0.tar.gz",
+          "url": "https://github.com/uniconv/plugins/releases/download/image-filter-v1.0.0/image-filter-1.0.0.tar.gz",
           "sha256": "<sha256>"
         }
       }
@@ -191,8 +191,8 @@ Submit a separate PR to add the plugin entry to `index.json`:
 
 ```json
 {
-  "name": "image-invert",
-  "description": "Invert image colors (native C++ plugin)",
+  "name": "video-convert",
+  "description": "Convert video formats",
   "author": "uniconv",
   "license": "MIT",
   "repository": "https://github.com/uniconv/plugins",
@@ -203,11 +203,11 @@ Submit a separate PR to add the plugin entry to `index.json`:
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
       "dependencies": [
-        { "name": "libvips", "type": "system", "check": "ldconfig -p | grep -q libvips" }
+        { "name": "libavformat-dev", "type": "system", "check": "pkg-config --exists libavformat" }
       ],
       "artifact": {
         "linux-x86_64": {
-          "url": "https://github.com/uniconv/plugins/releases/download/image-invert-v1.0.0/image-invert-1.0.0-linux-x86_64.tar.gz",
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.0.0/video-convert-1.0.0-linux-x86_64.tar.gz",
           "sha256": "<sha256>"
         },
         "linux-aarch64": {
