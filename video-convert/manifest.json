@@ -13,6 +13,52 @@
   ],
   "releases": [
     {
+      "version": "1.1.1",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        {
+          "name": "libavformat-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavformat"
+        },
+        {
+          "name": "libavcodec-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavcodec"
+        },
+        {
+          "name": "libavutil-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavutil"
+        },
+        {
+          "name": "libswscale-dev",
+          "type": "system",
+          "check": "pkg-config --exists libswscale"
+        },
+        {
+          "name": "libavfilter-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavfilter"
+        }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.1/video-convert-1.1.1-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.1/video-convert-1.1.1-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.1/video-convert-1.1.1-darwin-aarch64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.0",
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
