@@ -10,6 +10,11 @@
     "jpeg",
     "png",
     "webp",
+    "gif",
+    "bmp",
+    "tiff",
+    "heic",
+    "heif",
     "pdf"
   ],
   "input_formats": [
@@ -21,7 +26,8 @@
     "webp",
     "gif",
     "bmp",
-    "tiff"
+    "tiff",
+    "pdf"
   ],
   "input_types": [
     "image",

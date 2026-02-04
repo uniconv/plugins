@@ -28,8 +28,8 @@
 #include <sys/stat.h>
 
 // Plugin info
-static const char *targets[] = {"jpg", "jpeg", "png", "webp", "pdf", nullptr};
-static const char *input_formats[] = {"heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", nullptr};
+static const char *targets[] = {"jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "heic", "heif", "pdf", nullptr};
+static const char *input_formats[] = {"heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "pdf", nullptr};
 
 // Data type information
 static UniconvDataType input_types[] = {UNICONV_DATA_IMAGE, UNICONV_DATA_FILE, (UniconvDataType)0};
@@ -52,6 +52,8 @@ namespace
     constexpr int kDefaultJpegQuality = 85;
     constexpr int kDefaultWebpQuality = 80;
     constexpr int kDefaultPngQuality = 90;
+    constexpr int kDefaultHeifQuality = 50;
+    constexpr int kDefaultTiffQuality = 85;
     constexpr int kDefaultGenericQuality = 85;
 
     bool file_exists(const std::string &path)
@@ -123,6 +125,10 @@ namespace
             return kDefaultWebpQuality;
         if (lower == "png")
             return kDefaultPngQuality;
+        if (lower == "heic" || lower == "heif")
+            return kDefaultHeifQuality;
+        if (lower == "tiff")
+            return kDefaultTiffQuality;
         return kDefaultGenericQuality;
     }
 
@@ -313,6 +319,24 @@ extern "C"
             {
                 image.webpsave(output_path.c_str(),
                                vips::VImage::option()->set("Q", quality));
+            }
+            else if (target == "gif")
+            {
+                image.gifsave(output_path.c_str());
+            }
+            else if (target == "tiff")
+            {
+                image.tiffsave(output_path.c_str(),
+                               vips::VImage::option()->set("Q", quality));
+            }
+            else if (target == "heic" || target == "heif")
+            {
+                image.heifsave(output_path.c_str(),
+                               vips::VImage::option()->set("Q", quality));
+            }
+            else if (target == "bmp")
+            {
+                image.magicksave(output_path.c_str());
             }
             else if (target == "pdf")
             {
