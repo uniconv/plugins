@@ -122,7 +122,7 @@ package_plugin() {
     fi
 
     local interface
-    interface=$(python3 -c "import json; print(json.load(open('$dir/plugin.json'))['interface'])")
+    interface=$(python3 -c "import json; print(json.load(open('$dir/plugin.json'))['iface'])")
 
     case "$interface" in
         cli)    package_cli_plugin "$name" ;;
