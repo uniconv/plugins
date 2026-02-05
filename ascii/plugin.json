@@ -1,7 +1,7 @@
 {
   "name": "ascii",
   "scope": "ascii",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Convert media to ASCII representation",
   "iface": "cli",
   "executable": "ascii.py",
