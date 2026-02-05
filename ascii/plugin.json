@@ -1,14 +1,30 @@
 {
   "name": "ascii",
   "scope": "ascii",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert media to ASCII representation",
   "iface": "cli",
   "executable": "ascii.py",
-  "targets": ["ascii", "ascii-art", "text-art"],
-  "input_formats": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],
-  "input_types": ["image", "file"],
-  "output_types": ["text"],
+  "targets": [
+    "ascii",
+    "ascii-art",
+    "text-art"
+  ],
+  "input_formats": [
+    "jpg",
+    "jpeg",
+    "png",
+    "webp",
+    "bmp",
+    "gif"
+  ],
+  "input_types": [
+    "image",
+    "file"
+  ],
+  "output_types": [
+    "text"
+  ],
   "options": [
     {
       "name": "--width",
@@ -42,7 +58,15 @@
     }
   ],
   "dependencies": [
-    { "name": "python3", "type": "system", "version": ">=3.8" },
-    { "name": "Pillow", "type": "python", "version": ">=9.0" }
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8"
+    },
+    {
+      "name": "Pillow",
+      "type": "python",
+      "version": ">=9.0"
+    }
   ]
 }
