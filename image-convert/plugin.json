@@ -61,6 +61,12 @@
       "name": "libvips-dev",
       "type": "system",
       "check": "pkg-config --exists vips-cpp"
+    },
+    {
+      "name": "ghostscript",
+      "type": "system",
+      "check": "command -v gs",
+      "description": "Required for PDF input/output support"
     }
   ]
 }
