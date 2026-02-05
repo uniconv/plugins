@@ -3,7 +3,7 @@
   "scope": "ascii",
   "version": "1.0.3",
   "description": "Convert media to ASCII representation",
-  "iface": "cli",
+  "interface": "cli",
   "executable": "ascii.py",
   "targets": [
     "ascii",

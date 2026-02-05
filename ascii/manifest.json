@@ -14,7 +14,7 @@
     {
       "version": "1.0.3",
       "uniconv_compat": ">=0.1.0",
-      "iface": "cli",
+      "interface": "cli",
       "dependencies": [
         {
           "name": "python3",
@@ -37,7 +37,7 @@
     {
       "version": "1.0.2",
       "uniconv_compat": ">=0.1.0",
-      "iface": "cli",
+      "interface": "cli",
       "dependencies": [
         {
           "name": "python3",
@@ -60,7 +60,7 @@
     {
       "version": "1.0.1",
       "uniconv_compat": ">=0.1.0",
-      "iface": "cli",
+      "interface": "cli",
       "dependencies": [
         {
           "name": "python3",

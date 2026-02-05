@@ -37,7 +37,7 @@ jobs:
             echo "ERROR: $PLUGIN_JSON not found" >&2
             exit 1
           fi
-          INTERFACE=$(python3 -c "import json; print(json.load(open('$PLUGIN_JSON'))['iface'])")
+          INTERFACE=$(python3 -c "import json; print(json.load(open('$PLUGIN_JSON'))['interface'])")
           echo "interface=$INTERFACE" >> "$GITHUB_OUTPUT"
           echo "Detected interface: $INTERFACE"
 

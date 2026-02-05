@@ -71,7 +71,7 @@ MANIFEST_JSON="$PLUGIN_DIR/manifest.json"
 [[ -f "$PLUGIN_JSON" ]] || die "plugin.json not found: $PLUGIN_JSON"
 [[ -f "$MANIFEST_JSON" ]] || die "manifest.json not found: $MANIFEST_JSON"
 
-INTERFACE=$(json_field "$PLUGIN_JSON" "iface")
+INTERFACE=$(json_field "$PLUGIN_JSON" "interface")
 CURRENT_VERSION=$(json_field "$PLUGIN_JSON" "version")
 
 if [[ "$BUMP_OR_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -162,7 +162,7 @@ else:
 new_release = {
     'version': version,
     'uniconv_compat': '>=0.1.0',
-    'iface': interface,
+    'interface': interface,
     'dependencies': plugin.get('dependencies', []),
     'artifact': artifact
 }

@@ -3,7 +3,7 @@
   "scope": "image-convert",
   "version": "1.0.4",
   "description": "Image format conversion using libvips",
-  "iface": "native",
+  "interface": "native",
   "library": "libimage_convert",
   "targets": [
     "jpg",

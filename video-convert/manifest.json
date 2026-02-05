@@ -15,7 +15,7 @@
     {
       "version": "1.1.5",
       "uniconv_compat": ">=0.1.0",
-      "iface": "native",
+      "interface": "native",
       "dependencies": [
         {
           "name": "libavformat-dev",

@@ -17,7 +17,7 @@
     {
       "version": "1.0.4",
       "uniconv_compat": ">=0.1.0",
-      "iface": "native",
+      "interface": "native",
       "dependencies": [
         {
           "name": "libvips-dev",

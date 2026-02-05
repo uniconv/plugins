@@ -3,7 +3,7 @@
   "scope": "video-convert",
   "version": "1.1.5",
   "description": "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
-  "iface": "native",
+  "interface": "native",
   "library": "libvideo_convert",
   "targets": [
     "mp4",
