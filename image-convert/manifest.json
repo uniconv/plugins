@@ -15,6 +15,42 @@
   ],
   "releases": [
     {
+      "version": "1.0.7",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        {
+          "name": "libvips-dev",
+          "type": "system",
+          "check": "pkg-config --exists vips-cpp"
+        },
+        {
+          "name": "ghostscript",
+          "type": "system",
+          "check": "command -v gs",
+          "description": "Required for PDF input/output support"
+        }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.7/image-convert-1.0.7-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.7/image-convert-1.0.7-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.7/image-convert-1.0.7-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.7/image-convert-1.0.7-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.6",
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
