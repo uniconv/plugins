@@ -3,7 +3,7 @@
   "scope": "image-filter",
   "version": "1.0.0",
   "description": "Apply image filters (grayscale, invert) using Python/Pillow",
-  "interface": "cli",
+  "iface": "cli",
   "executable": "image_filter.py",
   "targets": ["grayscale", "gray", "bw", "invert", "negative"],
   "input_formats": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],

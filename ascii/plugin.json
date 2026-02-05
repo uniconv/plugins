@@ -3,7 +3,7 @@
   "scope": "ascii",
   "version": "1.0.0",
   "description": "Convert media to ASCII representation",
-  "interface": "cli",
+  "iface": "cli",
   "executable": "ascii.py",
   "targets": ["ascii", "ascii-art", "text-art"],
   "input_formats": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],
