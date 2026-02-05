@@ -13,6 +13,29 @@
   ],
   "releases": [
     {
+      "version": "1.0.1",
+      "uniconv_compat": ">=0.1.0",
+      "iface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8"
+        },
+        {
+          "name": "Pillow",
+          "type": "python",
+          "version": ">=9.0"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-filter-v1.0.1/image-filter-1.0.1.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.0",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
