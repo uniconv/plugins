@@ -46,19 +46,19 @@
       "artifact": {
         "linux-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.8/video-convert-1.1.8-linux-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "e25f6cbaad2a93758f1031036460c6149023654fb6c05f7cecd88c163eb83009"
         },
         "linux-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.8/video-convert-1.1.8-linux-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "700c1d9807d0e8737d00f04129c881669407d1dfe834bc9d0b6200f9b55103b5"
         },
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.8/video-convert-1.1.8-darwin-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "21bd9fdbdf300c88601a87cf57573432eafbebbc4c7257dbb179552cd7a94eba"
         },
         "windows-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.8/video-convert-1.1.8-windows-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "3b73e38c0a4b3f9cbea75181cf3c65bf2bc33a062f431e57123d6e8b68def21f"
         }
       }
     },
