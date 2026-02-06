@@ -3,6 +3,19 @@
   "scope": "document",
   "version": "1.0.1",
   "description": "Convert between document formats using LibreOffice",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "document",
+    "pdf",
+    "docx",
+    "odt",
+    "xlsx",
+    "pptx",
+    "libreoffice",
+    "conversion"
+  ],
   "interface": "cli",
   "executable": "doc-convert.py",
   "targets": [

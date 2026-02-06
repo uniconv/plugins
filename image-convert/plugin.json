@@ -3,6 +3,18 @@
   "scope": "image-convert",
   "version": "1.0.12",
   "description": "Image format conversion using libvips",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "image",
+    "vips",
+    "jpg",
+    "png",
+    "webp",
+    "heic",
+    "conversion"
+  ],
   "interface": "native",
   "library": "libimage_convert",
   "targets": [

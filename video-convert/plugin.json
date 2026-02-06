@@ -3,6 +3,16 @@
   "scope": "video-convert",
   "version": "1.1.8",
   "description": "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "video",
+    "gif",
+    "animation",
+    "conversion",
+    "ffmpeg"
+  ],
   "interface": "native",
   "library": "libvideo_convert",
   "targets": [

@@ -3,6 +3,15 @@
   "scope": "ascii",
   "version": "1.0.4",
   "description": "Convert media to ASCII representation",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "image",
+    "ascii",
+    "text-art",
+    "conversion"
+  ],
   "interface": "cli",
   "executable": "ascii.py",
   "targets": [

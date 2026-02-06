@@ -141,6 +141,11 @@ with open(manifest_path) as f:
 with open(plugin_json_path) as f:
     plugin = json.load(f)
 
+# Sync header fields from plugin.json to manifest.json
+for field in ['name', 'description', 'author', 'license', 'repository', 'keywords']:
+    if field in plugin:
+        manifest[field] = plugin[field]
+
 tag = f'{name}-v{version}'
 base_url = f'https://github.com/{repo}/releases/download/{tag}'
 
