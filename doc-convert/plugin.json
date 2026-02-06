@@ -1,0 +1,86 @@
+{
+  "name": "doc-convert",
+  "scope": "document",
+  "version": "1.0.0",
+  "description": "Convert between document formats using LibreOffice",
+  "interface": "cli",
+  "executable": "doc-convert.py",
+  "targets": [
+    "pdf",
+    "docx",
+    "doc",
+    "odt",
+    "rtf",
+    "txt",
+    "html",
+    "xlsx",
+    "xls",
+    "ods",
+    "csv",
+    "pptx",
+    "ppt",
+    "odp",
+    "epub",
+    "md"
+  ],
+  "input_formats": [
+    "pdf",
+    "docx",
+    "doc",
+    "odt",
+    "rtf",
+    "txt",
+    "html",
+    "htm",
+    "xlsx",
+    "xls",
+    "ods",
+    "csv",
+    "pptx",
+    "ppt",
+    "odp",
+    "epub",
+    "md"
+  ],
+  "input_types": [
+    "document",
+    "file"
+  ],
+  "output_types": [
+    "document",
+    "file"
+  ],
+  "options": [
+    {
+      "name": "--pages",
+      "type": "string",
+      "default": "",
+      "description": "Page range for PDF output (e.g., '1-5', '1,3,5')"
+    },
+    {
+      "name": "--password",
+      "type": "string",
+      "default": "",
+      "description": "Password for protected documents"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8"
+    },
+    {
+      "name": "libreoffice",
+      "type": "system",
+      "check": "command -v libreoffice || command -v soffice"
+    },
+    {
+      "name": "pandoc",
+      "type": "system",
+      "check": "command -v pandoc",
+      "optional": true,
+      "description": "Required for Markdown conversion"
+    }
+  ]
+}
