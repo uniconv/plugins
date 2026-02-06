@@ -85,27 +85,32 @@
     {
       "name": "libavformat-dev",
       "type": "system",
-      "check": "pkg-config --exists libavformat"
+      "check": "pkg-config --exists libavformat",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavformat-dev (Linux)"
     },
     {
       "name": "libavcodec-dev",
       "type": "system",
-      "check": "pkg-config --exists libavcodec"
+      "check": "pkg-config --exists libavcodec",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavcodec-dev (Linux)"
     },
     {
       "name": "libavutil-dev",
       "type": "system",
-      "check": "pkg-config --exists libavutil"
+      "check": "pkg-config --exists libavutil",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavutil-dev (Linux)"
     },
     {
       "name": "libswscale-dev",
       "type": "system",
-      "check": "pkg-config --exists libswscale"
+      "check": "pkg-config --exists libswscale",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libswscale-dev (Linux)"
     },
     {
       "name": "libavfilter-dev",
       "type": "system",
-      "check": "pkg-config --exists libavfilter"
+      "check": "pkg-config --exists libavfilter",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavfilter-dev (Linux)"
     }
   ]
 }

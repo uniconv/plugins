@@ -65,12 +65,14 @@
     {
       "name": "python3",
       "type": "system",
-      "version": ">=3.8"
+      "version": ">=3.8",
+      "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
     },
     {
       "name": "Pillow",
       "type": "python",
-      "version": ">=9.0"
+      "version": ">=9.0",
+      "install_hint": "pip install Pillow"
     }
   ]
 }
