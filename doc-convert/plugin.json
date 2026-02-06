@@ -1,7 +1,7 @@
 {
   "name": "doc-convert",
   "scope": "uniconv",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Convert between document formats using LibreOffice",
   "author": "uniconv",
   "license": "MIT",
@@ -88,7 +88,7 @@
       "name": "libreoffice",
       "type": "system",
       "check": "command -v libreoffice || command -v soffice",
-      "install_hint": "brew install --cask libreoffice (macOS) or apt install libreoffice (Linux)"
+      "install_hint": "brew install libreoffice (macOS) or apt install libreoffice (Linux)"
     },
     {
       "name": "pandoc",
@@ -97,6 +97,12 @@
       "optional": true,
       "description": "Required for Markdown conversion",
       "install_hint": "brew install pandoc (macOS) or apt install pandoc (Linux)"
+    },
+    {
+      "name": "pdf2docx",
+      "type": "python",
+      "version": ">=0.5.0",
+      "description": "Required for PDF to DOCX conversion"
     }
   ]
 }

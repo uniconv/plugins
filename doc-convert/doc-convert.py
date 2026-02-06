@@ -179,6 +179,22 @@ def convert_with_libreoffice(input_path, output_path, target_format, password=No
             return False, str(e)
 
 
+def convert_pdf_to_docx(input_path, output_path):
+    """Convert PDF to DOCX using pdf2docx library."""
+    try:
+        from pdf2docx import Converter
+    except ImportError:
+        return False, "pdf2docx not installed. Run: pip install pdf2docx"
+
+    try:
+        cv = Converter(input_path)
+        cv.convert(output_path)
+        cv.close()
+        return True, None
+    except Exception as e:
+        return False, f"PDF to DOCX conversion failed: {str(e)}"
+
+
 def convert_with_pandoc(input_path, output_path, input_format, target_format):
     """Convert using Pandoc (for Markdown conversions)."""
     pandoc_path = find_pandoc()
@@ -234,14 +250,22 @@ def convert_with_pandoc(input_path, output_path, input_format, target_format):
         return False, str(e)
 
 
-def convert_document(input_path, output_path, target_format, password=None):
+def convert_document(input_path, output_path, target_format, password=None, input_format=None):
     """
     Convert a document to the target format.
 
     Chooses the appropriate conversion method based on formats.
     """
-    input_ext = Path(input_path).suffix.lower().lstrip('.')
+    # Use provided input_format hint, or detect from file extension
+    if input_format:
+        input_ext = input_format.lower().lstrip('.')
+    else:
+        input_ext = Path(input_path).suffix.lower().lstrip('.')
     target_format = target_format.lower().lstrip('.')
+
+    # PDF to DOCX uses pdf2docx library (LibreOffice can't do this)
+    if input_ext == 'pdf' and target_format in ('docx', 'doc'):
+        return convert_pdf_to_docx(input_path, output_path)
 
     # Markdown conversions prefer Pandoc
     if input_ext in MARKDOWN_FORMATS or target_format in MARKDOWN_FORMATS:
@@ -263,6 +287,7 @@ def main():
     parser.add_argument('--input', required=True, help='Input file path')
     parser.add_argument('--target', required=True, help='Target format')
     parser.add_argument('--output', help='Output file path')
+    parser.add_argument('--input-format', help='Input format hint (for temp files)')
     parser.add_argument('--force', action='store_true', help='Overwrite existing')
     parser.add_argument('--dry-run', action='store_true', help='Dry run mode')
 
@@ -314,17 +339,19 @@ def main():
         return 0
 
     # Perform conversion
+    input_format = getattr(args, 'input_format', None)
     success, error = convert_document(
         args.input,
         output_path,
         target_format,
-        password=args.password if args.password else None
+        password=args.password if args.password else None,
+        input_format=input_format
     )
 
     if success:
         output_size = os.path.getsize(output_path)
         input_size = os.path.getsize(args.input)
-        input_ext = Path(args.input).suffix.lower().lstrip('.')
+        input_ext = input_format if input_format else Path(args.input).suffix.lower().lstrip('.')
 
         result = {
             "success": True,
