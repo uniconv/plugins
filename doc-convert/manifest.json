@@ -16,6 +16,36 @@
   ],
   "releases": [
     {
+      "version": "1.0.1",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8"
+        },
+        {
+          "name": "libreoffice",
+          "type": "system",
+          "check": "command -v libreoffice || command -v soffice"
+        },
+        {
+          "name": "pandoc",
+          "type": "system",
+          "check": "command -v pandoc",
+          "optional": true,
+          "description": "Required for Markdown conversion"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.1/doc-convert-1.0.1.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.0",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
