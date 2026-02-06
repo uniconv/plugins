@@ -336,11 +336,13 @@ extern "C"
             }
             else if (target == "bmp")
             {
-                image.magicksave(output_path.c_str());
+                image.magicksave(output_path.c_str(),
+                                 vips::VImage::option()->set("format", "BMP"));
             }
             else if (target == "pdf")
             {
-                image.magicksave(output_path.c_str());
+                image.magicksave(output_path.c_str(),
+                                 vips::VImage::option()->set("format", "PDF"));
             }
             else
             {
