@@ -24,10 +24,10 @@ compute_sha256() {
     fi
 }
 
-# Convert path to format Python can understand (Windows needs native paths)
+# Convert path to format Python can understand (Windows needs mixed-style paths)
 python_path() {
     if command -v cygpath >/dev/null 2>&1; then
-        cygpath -w "$1"
+        cygpath -m "$1"  # -m outputs forward slashes: D:/a/plugins/...
     else
         echo "$1"
     fi
