@@ -33,7 +33,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-filter-v1.0.3/image-filter-1.0.3.tar.gz",
-          "sha256": ""
+          "sha256": "1adf91561da2660f352b7c862310f6c79711c01a970b22478bf9ced2a2ffb4b9"
         }
       }
     },
