@@ -1,7 +1,7 @@
 {
   "name": "video-convert",
   "scope": "video-convert",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
   "interface": "native",
   "library": "libvideo_convert",
