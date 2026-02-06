@@ -1,7 +1,7 @@
 {
   "name": "image-convert",
   "scope": "image-convert",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Image format conversion using libvips",
   "interface": "native",
   "library": "libimage_convert",
