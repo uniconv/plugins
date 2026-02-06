@@ -43,19 +43,19 @@
       "artifact": {
         "linux-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.16/image-convert-1.0.16-linux-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "76c923b5115d27a2a10dae41e91ba2f1df338fe2be99deea593b5451d8f0b03c"
         },
         "linux-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.16/image-convert-1.0.16-linux-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "a6795e88a5e233bf6cf27f176fd82023f20d637ea92d2342af5011aadac25991"
         },
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.16/image-convert-1.0.16-darwin-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "88203bd365740db8dccee9d4f4f0b6f4910ff45d79e2369611f2f6855203622f"
         },
         "windows-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.16/image-convert-1.0.16-windows-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "b66cafecc1285b2ef97ce55e484ad8076f714fe26bdb3f4836ea08496de249ce"
         }
       }
     },
