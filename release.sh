@@ -4,25 +4,27 @@ set -euo pipefail
 # Release a uniconv plugin.
 #
 # Bumps the version in plugin.json, adds a release entry to manifest.json,
-# commits, tags, and pushes to trigger the CI release workflow.
+# commits, and tags. Use --push to also push to origin.
 #
 # Usage:
-#   ./release.sh ascii patch              # 1.0.0 → 1.0.1
+#   ./release.sh ascii patch              # 1.0.0 → 1.0.1 (commit + tag only)
 #   ./release.sh ascii minor              # 1.0.0 → 1.1.0
 #   ./release.sh ascii major              # 1.0.0 → 2.0.0
 #   ./release.sh ascii 2.0.0             # explicit version
+#   ./release.sh ascii patch --push       # also push commit and tag to origin
 #   ./release.sh ascii patch --dry-run    # show what would happen
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO="uniconv/plugins"
 DRY_RUN=false
+PUSH=false
 
 # --- Helpers ---
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 
 usage() {
-    echo "Usage: $0 <plugin-name> <patch|minor|major|X.Y.Z> [--dry-run]"
+    echo "Usage: $0 <plugin-name> <patch|minor|major|X.Y.Z> [--dry-run] [--push]"
     exit 1
 }
 
@@ -56,6 +58,7 @@ shift 2
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --dry-run) DRY_RUN=true ;;
+        --push) PUSH=true ;;
         *) die "Unknown option: $1" ;;
     esac
     shift
@@ -211,12 +214,18 @@ echo ""
 echo "--- Step 5: Push ---"
 if $DRY_RUN; then
     echo "  [dry-run] Would push commit and tag to origin"
-else
+elif $PUSH; then
     git -C "$SCRIPT_DIR" push origin HEAD "$TAG"
     echo "  Pushed commit and tag."
+else
+    echo "  Skipped (use --push to push commit and tag to origin)"
 fi
 echo ""
 
 echo "=== Done: $NAME $TAG released ==="
-echo "  CI will build and create the GitHub Release."
-echo "  Monitor: https://github.com/$REPO/actions"
+if $PUSH; then
+    echo "  CI will build and create the GitHub Release."
+    echo "  Monitor: https://github.com/$REPO/actions"
+else
+    echo "  Run with --push to push commit and tag to origin."
+fi

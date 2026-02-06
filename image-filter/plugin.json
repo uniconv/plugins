@@ -1,6 +1,6 @@
 {
   "name": "image-filter",
-  "scope": "image-filter",
+  "scope": "uniconv",
   "version": "1.0.3",
   "description": "Apply image filters (grayscale, invert) using Python/Pillow",
   "author": "uniconv",

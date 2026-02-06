@@ -1,6 +1,6 @@
 {
   "name": "doc-convert",
-  "scope": "document",
+  "scope": "uniconv",
   "version": "1.0.2",
   "description": "Convert between document formats using LibreOffice",
   "author": "uniconv",
