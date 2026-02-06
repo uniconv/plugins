@@ -1,7 +1,7 @@
 {
   "name": "image-convert",
   "scope": "image-convert",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Image format conversion using libvips",
   "interface": "native",
   "library": "libimage_convert",
@@ -58,15 +58,31 @@
   ],
   "dependencies": [
     {
-      "name": "libvips-dev",
+      "name": "libvips",
       "type": "system",
-      "check": "pkg-config --exists vips-cpp"
+      "check": "pkg-config --exists vips-cpp",
+      "install_hint": "brew install vips (macOS) or apt install libvips-dev (Linux)"
+    },
+    {
+      "name": "imagemagick",
+      "type": "system",
+      "check": "command -v convert",
+      "install_hint": "brew install imagemagick (macOS) or apt install imagemagick (Linux)",
+      "description": "Required for PDF and additional format support via libvips"
     },
     {
       "name": "ghostscript",
       "type": "system",
       "check": "command -v gs",
+      "install_hint": "brew install ghostscript (macOS) or apt install ghostscript (Linux)",
       "description": "Required for PDF input/output support"
+    },
+    {
+      "name": "imagemagick-pdf-delegate",
+      "type": "system",
+      "check": "convert -list delegate 2>/dev/null | grep -q pdf",
+      "install_hint": "Install ghostscript then reinstall imagemagick: brew reinstall imagemagick",
+      "description": "ImageMagick must be built with PDF delegate support. If missing, reinstall imagemagick after installing ghostscript."
     }
   ]
 }
