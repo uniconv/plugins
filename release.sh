@@ -11,6 +11,7 @@ set -euo pipefail
 #   ./release.sh ascii minor              # 1.0.0 → 1.1.0
 #   ./release.sh ascii major              # 1.0.0 → 2.0.0
 #   ./release.sh ascii 2.0.0             # explicit version
+#   ./release.sh all patch                # bump all plugins
 #   ./release.sh ascii patch --push       # also push commit and tag to origin
 #   ./release.sh ascii patch --dry-run    # show what would happen
 
@@ -24,7 +25,7 @@ PUSH=false
 die() { echo "ERROR: $*" >&2; exit 1; }
 
 usage() {
-    echo "Usage: $0 <plugin-name> <patch|minor|major|X.Y.Z> [--dry-run] [--push]"
+    echo "Usage: $0 <plugin-name|all> <patch|minor|major|X.Y.Z> [--dry-run] [--push]"
     exit 1
 }
 
@@ -48,67 +49,51 @@ validate_version() {
     [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "Invalid version format: $1 (expected X.Y.Z)"
 }
 
-# --- Parse arguments ---
+# --- Release a single plugin ---
 
-[[ $# -ge 2 ]] || usage
+release_plugin() {
+    local NAME="$1"
+    local BUMP_OR_VERSION="$2"
 
-NAME="$1"
-BUMP_OR_VERSION="$2"
-shift 2
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        --dry-run) DRY_RUN=true ;;
-        --push) PUSH=true ;;
-        *) die "Unknown option: $1" ;;
-    esac
-    shift
-done
+    local PLUGIN_DIR="$SCRIPT_DIR/$NAME"
+    local PLUGIN_JSON="$PLUGIN_DIR/plugin.json"
+    local MANIFEST_JSON="$PLUGIN_DIR/manifest.json"
 
-# --- Validate ---
+    [[ -d "$PLUGIN_DIR" ]] || die "Plugin directory not found: $PLUGIN_DIR"
+    [[ -f "$PLUGIN_JSON" ]] || die "plugin.json not found: $PLUGIN_JSON"
+    [[ -f "$MANIFEST_JSON" ]] || die "manifest.json not found: $MANIFEST_JSON"
 
-PLUGIN_DIR="$SCRIPT_DIR/$NAME"
-PLUGIN_JSON="$PLUGIN_DIR/plugin.json"
-MANIFEST_JSON="$PLUGIN_DIR/manifest.json"
+    local INTERFACE
+    INTERFACE=$(json_field "$PLUGIN_JSON" "interface")
+    local CURRENT_VERSION
+    CURRENT_VERSION=$(json_field "$PLUGIN_JSON" "version")
 
-[[ -d "$PLUGIN_DIR" ]] || die "Plugin directory not found: $PLUGIN_DIR"
-[[ -f "$PLUGIN_JSON" ]] || die "plugin.json not found: $PLUGIN_JSON"
-[[ -f "$MANIFEST_JSON" ]] || die "manifest.json not found: $MANIFEST_JSON"
+    local NEW_VERSION
+    if [[ "$BUMP_OR_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        NEW_VERSION="$BUMP_OR_VERSION"
+    else
+        NEW_VERSION=$(bump_version "$CURRENT_VERSION" "$BUMP_OR_VERSION")
+    fi
 
-INTERFACE=$(json_field "$PLUGIN_JSON" "interface")
-CURRENT_VERSION=$(json_field "$PLUGIN_JSON" "version")
+    validate_version "$NEW_VERSION"
+    [[ "$NEW_VERSION" != "$CURRENT_VERSION" ]] || die "New version is the same as current ($CURRENT_VERSION)"
 
-if [[ "$BUMP_OR_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-    NEW_VERSION="$BUMP_OR_VERSION"
-else
-    NEW_VERSION=$(bump_version "$CURRENT_VERSION" "$BUMP_OR_VERSION")
-fi
+    local TAG="${NAME}-v${NEW_VERSION}"
 
-validate_version "$NEW_VERSION"
-[[ "$NEW_VERSION" != "$CURRENT_VERSION" ]] || die "New version is the same as current ($CURRENT_VERSION)"
+    echo "=== Plugin release: $NAME ==="
+    echo "  Current version: $CURRENT_VERSION"
+    echo "  New version:     $NEW_VERSION"
+    echo "  Interface:       $INTERFACE"
+    echo "  Tag:             $TAG"
+    echo ""
 
-TAG="${NAME}-v${NEW_VERSION}"
+    # --- Step 1: Update plugin.json ---
 
-echo "=== Plugin release: $NAME ==="
-echo "  Current version: $CURRENT_VERSION"
-echo "  New version:     $NEW_VERSION"
-echo "  Interface:       $INTERFACE"
-echo "  Tag:             $TAG"
-echo ""
-
-# --- Confirmation ---
-if ! $DRY_RUN; then
-    read -p "Proceed with release? [y/N] " -n 1 -r
-    echo
-    [[ $REPLY =~ ^[Yy]$ ]] || exit 0
-fi
-
-# --- Step 1: Update plugin.json ---
-
-echo "--- Step 1: Update plugin.json ---"
-if $DRY_RUN; then
-    echo "  [dry-run] Would update version $CURRENT_VERSION → $NEW_VERSION"
-else
-    python3 -c "
+    echo "--- Step 1: Update plugin.json ---"
+    if $DRY_RUN; then
+        echo "  [dry-run] Would update version $CURRENT_VERSION → $NEW_VERSION"
+    else
+        python3 -c "
 import json, sys
 path = sys.argv[1]
 version = sys.argv[2]
@@ -119,17 +104,17 @@ with open(path, 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
 " "$PLUGIN_JSON" "$NEW_VERSION"
-    echo "  Updated version to $NEW_VERSION"
-fi
-echo ""
+        echo "  Updated version to $NEW_VERSION"
+    fi
+    echo ""
 
-# --- Step 2: Add release entry to manifest.json ---
+    # --- Step 2: Add release entry to manifest.json ---
 
-echo "--- Step 2: Update manifest.json ---"
-if $DRY_RUN; then
-    echo "  [dry-run] Would add release entry for $NEW_VERSION"
-else
-    python3 -c "
+    echo "--- Step 2: Update manifest.json ---"
+    if $DRY_RUN; then
+        echo "  [dry-run] Would add release entry for $NEW_VERSION"
+    else
+        python3 -c "
 import json, sys
 
 manifest_path = sys.argv[1]
@@ -182,50 +167,98 @@ with open(manifest_path, 'w') as f:
     json.dump(manifest, f, indent=2)
     f.write('\n')
 " "$MANIFEST_JSON" "$PLUGIN_JSON" "$NAME" "$NEW_VERSION" "$INTERFACE" "$REPO"
-    echo "  Added release entry for $NEW_VERSION"
-fi
-echo ""
+        echo "  Added release entry for $NEW_VERSION"
+    fi
+    echo ""
 
-# --- Step 3: Commit ---
+    # --- Step 3: Commit ---
 
-echo "--- Step 3: Commit ---"
-if $DRY_RUN; then
-    echo "  [dry-run] Would commit: chore($NAME): bump version to v$NEW_VERSION"
+    echo "--- Step 3: Commit ---"
+    if $DRY_RUN; then
+        echo "  [dry-run] Would commit: chore($NAME): bump version to v$NEW_VERSION"
+    else
+        git -C "$SCRIPT_DIR" add "$NAME/plugin.json" "$NAME/manifest.json"
+        git -C "$SCRIPT_DIR" commit -m "chore($NAME): bump version to v$NEW_VERSION"
+        echo "  Committed."
+    fi
+    echo ""
+
+    # --- Step 4: Tag ---
+
+    echo "--- Step 4: Tag ---"
+    if $DRY_RUN; then
+        echo "  [dry-run] Would create annotated tag: $TAG"
+    else
+        git -C "$SCRIPT_DIR" tag -a "$TAG" -m "Release $NAME v$NEW_VERSION"
+        echo "  Tagged: $TAG"
+    fi
+    echo ""
+
+    # --- Step 5: Push ---
+
+    echo "--- Step 5: Push ---"
+    if $DRY_RUN; then
+        echo "  [dry-run] Would push commit and tag to origin"
+    elif $PUSH; then
+        git -C "$SCRIPT_DIR" push origin HEAD "$TAG"
+        echo "  Pushed commit and tag."
+    else
+        echo "  Skipped (use --push to push commit and tag to origin)"
+    fi
+    echo ""
+
+    echo "=== Done: $NAME $TAG released ==="
+    if $PUSH; then
+        echo "  CI will build and create the GitHub Release."
+        echo "  Monitor: https://github.com/$REPO/actions"
+    else
+        echo "  Run with --push to push commit and tag to origin."
+    fi
+    echo ""
+}
+
+# --- Parse arguments ---
+
+[[ $# -ge 2 ]] || usage
+
+NAME="$1"
+BUMP_OR_VERSION="$2"
+shift 2
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --dry-run) DRY_RUN=true ;;
+        --push) PUSH=true ;;
+        *) die "Unknown option: $1" ;;
+    esac
+    shift
+done
+
+# --- Run ---
+
+if [[ "$NAME" == "all" ]]; then
+    # 'all' only supports bump types, not explicit versions
+    [[ "$BUMP_OR_VERSION" =~ ^(patch|minor|major)$ ]] || die "'all' only supports patch|minor|major, not explicit versions"
+
+    # Confirmation for all plugins
+    if ! $DRY_RUN; then
+        echo "Will release ALL plugins with '$BUMP_OR_VERSION' bump."
+        read -p "Proceed? [y/N] " -n 1 -r
+        echo
+        [[ $REPLY =~ ^[Yy]$ ]] || exit 0
+    fi
+
+    for plugin_json in "$SCRIPT_DIR"/*/plugin.json; do
+        plugin_dir="$(dirname "$plugin_json")"
+        plugin_name="$(basename "$plugin_dir")"
+        release_plugin "$plugin_name" "$BUMP_OR_VERSION"
+    done
 else
-    git -C "$SCRIPT_DIR" add "$NAME/plugin.json" "$NAME/manifest.json"
-    git -C "$SCRIPT_DIR" commit -m "chore($NAME): bump version to v$NEW_VERSION"
-    echo "  Committed."
-fi
-echo ""
+    # Confirmation for single plugin
+    if ! $DRY_RUN; then
+        read -p "Proceed with release? [y/N] " -n 1 -r
+        echo
+        [[ $REPLY =~ ^[Yy]$ ]] || exit 0
+    fi
 
-# --- Step 4: Tag ---
-
-echo "--- Step 4: Tag ---"
-if $DRY_RUN; then
-    echo "  [dry-run] Would create annotated tag: $TAG"
-else
-    git -C "$SCRIPT_DIR" tag -a "$TAG" -m "Release $NAME v$NEW_VERSION"
-    echo "  Tagged: $TAG"
-fi
-echo ""
-
-# --- Step 5: Push ---
-
-echo "--- Step 5: Push ---"
-if $DRY_RUN; then
-    echo "  [dry-run] Would push commit and tag to origin"
-elif $PUSH; then
-    git -C "$SCRIPT_DIR" push origin HEAD "$TAG"
-    echo "  Pushed commit and tag."
-else
-    echo "  Skipped (use --push to push commit and tag to origin)"
-fi
-echo ""
-
-echo "=== Done: $NAME $TAG released ==="
-if $PUSH; then
-    echo "  CI will build and create the GitHub Release."
-    echo "  Monitor: https://github.com/$REPO/actions"
-else
-    echo "  Run with --push to push commit and tag to origin."
+    release_plugin "$NAME" "$BUMP_OR_VERSION"
 fi
