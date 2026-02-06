@@ -9,6 +9,7 @@ Usage:
 
 Supported formats:
     Office:  docx, doc, odt, xlsx, xls, ods, pptx, ppt, odp
+    Korean:  hwp, hwpx (input only)
     Export:  pdf, txt, html, csv, rtf
     Other:   epub, md (markdown)
 
@@ -27,7 +28,7 @@ import tempfile
 from pathlib import Path
 
 # Format categories
-WORD_FORMATS = {'docx', 'doc', 'odt', 'rtf', 'txt', 'html', 'htm', 'pdf', 'epub'}
+WORD_FORMATS = {'docx', 'doc', 'odt', 'rtf', 'txt', 'html', 'htm', 'pdf', 'epub', 'hwp', 'hwpx'}
 SPREADSHEET_FORMATS = {'xlsx', 'xls', 'ods', 'csv'}
 PRESENTATION_FORMATS = {'pptx', 'ppt', 'odp', 'pdf'}
 MARKDOWN_FORMATS = {'md', 'markdown'}

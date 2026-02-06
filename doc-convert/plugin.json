@@ -14,6 +14,7 @@
     "xlsx",
     "pptx",
     "libreoffice",
+    "hwp",
     "conversion"
   ],
   "interface": "cli",
@@ -45,6 +46,8 @@
     "txt",
     "html",
     "htm",
+    "hwp",
+    "hwpx",
     "xlsx",
     "xls",
     "ods",
