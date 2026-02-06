@@ -24,6 +24,15 @@ compute_sha256() {
     fi
 }
 
+# Convert path to format Python can understand (Windows needs native paths)
+python_path() {
+    if command -v cygpath >/dev/null 2>&1; then
+        cygpath -w "$1"
+    else
+        echo "$1"
+    fi
+}
+
 # Detect platform for native plugins
 detect_platform() {
     local os arch
@@ -46,9 +55,10 @@ PLATFORM="${PLATFORM:-$(detect_platform)}"
 package_cli_plugin() {
     local name="$1"
     local dir="$SCRIPT_DIR/$name"
-    local version
+    local version pypath
 
-    version=$(python3 -c "import json; print(json.load(open('$dir/plugin.json'))['version'])")
+    pypath=$(python_path "$dir/plugin.json")
+    version=$(python3 -c "import json; print(json.load(open('$pypath'))['version'])")
     local tarball="$DIST_DIR/${name}-${version}.tar.gz"
 
     echo "Packaging $name v$version (cli, any) ..."
@@ -69,10 +79,11 @@ package_cli_plugin() {
 package_native_plugin() {
     local name="$1"
     local dir="$SCRIPT_DIR/$name"
-    local version lib_name
+    local version lib_name pypath
 
-    version=$(python3 -c "import json; print(json.load(open('$dir/plugin.json'))['version'])")
-    lib_name=$(python3 -c "import json; print(json.load(open('$dir/plugin.json'))['library'])")
+    pypath=$(python_path "$dir/plugin.json")
+    version=$(python3 -c "import json; print(json.load(open('$pypath'))['version'])")
+    lib_name=$(python3 -c "import json; print(json.load(open('$pypath'))['library'])")
 
     local tarball="$DIST_DIR/${name}-${version}-${PLATFORM}.tar.gz"
 
@@ -121,8 +132,9 @@ package_plugin() {
         return 1
     fi
 
-    local interface
-    interface=$(python3 -c "import json; print(json.load(open('$dir/plugin.json'))['interface'])")
+    local interface pypath
+    pypath=$(python_path "$dir/plugin.json")
+    interface=$(python3 -c "import json; print(json.load(open('$pypath'))['interface'])")
 
     case "$interface" in
         cli)    package_cli_plugin "$name" ;;
