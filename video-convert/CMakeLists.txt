@@ -50,6 +50,13 @@ set_target_properties(video_convert PROPERTIES
     OUTPUT_NAME "video_convert"
 )
 
+# Copy plugin.json to build directory for local development
+add_custom_command(TARGET video_convert POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/plugin.json"
+        "$<TARGET_FILE_DIR:video_convert>/plugin.json"
+)
+
 # Install to plugin directory
 install(TARGETS video_convert
     LIBRARY DESTINATION .

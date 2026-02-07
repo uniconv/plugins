@@ -50,6 +50,13 @@ set_target_properties(audio_convert PROPERTIES
     OUTPUT_NAME "audio_convert"
 )
 
+# Copy plugin.json to build directory for local development
+add_custom_command(TARGET audio_convert POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/plugin.json"
+        "$<TARGET_FILE_DIR:audio_convert>/plugin.json"
+)
+
 # Install to plugin directory
 install(TARGETS audio_convert
     LIBRARY DESTINATION .
