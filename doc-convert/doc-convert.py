@@ -116,7 +116,7 @@ def convert_hwp_with_pyhwp(input_path, output_path, target_format):
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_output = os.path.join(temp_dir, f"output.{target_format}")
-                cmd = [tool_path, input_path, temp_output]
+                cmd = [tool_path, '--output', temp_output, input_path]
                 result = subprocess.run(
                     cmd, capture_output=True, text=True, timeout=300
                 )
@@ -140,7 +140,7 @@ def convert_hwp_with_pyhwp(input_path, output_path, target_format):
     try:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_odt = os.path.join(temp_dir, "intermediate.odt")
-            cmd = [odt_tool, input_path, temp_odt]
+            cmd = [odt_tool, '--output', temp_odt, input_path]
             result = subprocess.run(
                 cmd, capture_output=True, text=True, timeout=300
             )

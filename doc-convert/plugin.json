@@ -112,7 +112,13 @@
       "type": "python",
       "optional": true,
       "description": "Required for HWP conversion on systems where LibreOffice lacks the HWP filter",
-      "install_hint": "pip install pyhwp"
+      "install_hint": "pip install pyhwp six"
+    },
+    {
+      "name": "six",
+      "type": "python",
+      "optional": true,
+      "description": "Required by pyhwp (missing transitive dependency)"
     }
   ]
 }
