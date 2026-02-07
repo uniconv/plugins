@@ -1,0 +1,126 @@
+{
+  "name": "audio-convert",
+  "scope": "uniconv",
+  "version": "1.0.0",
+  "description": "Audio format conversion and audio extraction from video (mp3, wav, flac, aac, ogg, opus, m4a, wma, aiff, alac, ac3)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "audio",
+    "music",
+    "sound",
+    "conversion",
+    "ffmpeg"
+  ],
+  "interface": "native",
+  "library": "libaudio_convert",
+  "targets": [
+    "mp3",
+    "wav",
+    "flac",
+    "aac",
+    "ogg",
+    "opus",
+    "m4a",
+    "wma",
+    "aiff",
+    "alac",
+    "ac3"
+  ],
+  "input_formats": [
+    "mp3",
+    "wav",
+    "flac",
+    "aac",
+    "ogg",
+    "opus",
+    "m4a",
+    "wma",
+    "aiff",
+    "alac",
+    "ac3",
+    "amr",
+    "ape",
+    "mp4",
+    "mov",
+    "avi",
+    "webm",
+    "mkv",
+    "m4v"
+  ],
+  "input_types": [
+    "audio",
+    "video",
+    "file"
+  ],
+  "output_types": [
+    "audio",
+    "file"
+  ],
+  "options": [
+    {
+      "name": "--bitrate",
+      "type": "string",
+      "description": "Output bitrate (e.g., '128k', '320k')"
+    },
+    {
+      "name": "--sample-rate",
+      "type": "int",
+      "description": "Output sample rate in Hz (e.g., 44100, 48000)"
+    },
+    {
+      "name": "--channels",
+      "type": "int",
+      "description": "Number of output channels (1 = mono, 2 = stereo)"
+    },
+    {
+      "name": "--volume",
+      "type": "float",
+      "default": "1.0",
+      "description": "Volume adjustment factor (e.g., 0.5 = half, 2.0 = double)"
+    },
+    {
+      "name": "--start",
+      "type": "float",
+      "description": "Start time in seconds"
+    },
+    {
+      "name": "--duration",
+      "type": "float",
+      "description": "Duration in seconds"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "libavformat-dev",
+      "type": "system",
+      "check": "pkg-config --exists libavformat",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavformat-dev (Linux)"
+    },
+    {
+      "name": "libavcodec-dev",
+      "type": "system",
+      "check": "pkg-config --exists libavcodec",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavcodec-dev (Linux)"
+    },
+    {
+      "name": "libavutil-dev",
+      "type": "system",
+      "check": "pkg-config --exists libavutil",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavutil-dev (Linux)"
+    },
+    {
+      "name": "libswresample-dev",
+      "type": "system",
+      "check": "pkg-config --exists libswresample",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libswresample-dev (Linux)"
+    },
+    {
+      "name": "libavfilter-dev",
+      "type": "system",
+      "check": "pkg-config --exists libavfilter",
+      "install_hint": "brew install ffmpeg (macOS) or apt install libavfilter-dev (Linux)"
+    }
+  ]
+}
