@@ -1,0 +1,97 @@
+{
+  "name": "data-convert",
+  "scope": "uniconv",
+  "version": "0.0.0",
+  "description": "Convert between structured data formats (JSON, YAML, TOML, XML, CSV)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "data",
+    "json",
+    "yaml",
+    "toml",
+    "xml",
+    "csv",
+    "tsv",
+    "conversion"
+  ],
+  "interface": "cli",
+  "executable": "data-convert.py",
+  "targets": [
+    "json",
+    "yaml",
+    "toml",
+    "xml",
+    "csv"
+  ],
+  "input_formats": [
+    "json",
+    "yaml",
+    "yml",
+    "toml",
+    "xml",
+    "csv",
+    "tsv"
+  ],
+  "input_types": [
+    "json",
+    "file"
+  ],
+  "output_types": [
+    "json",
+    "file"
+  ],
+  "options": [
+    {
+      "name": "--indent",
+      "type": "int",
+      "default": 2,
+      "description": "Indentation spaces for formatted output"
+    },
+    {
+      "name": "--no-pretty",
+      "type": "bool",
+      "default": false,
+      "description": "Compact output (no indentation)"
+    },
+    {
+      "name": "--csv-delimiter",
+      "type": "string",
+      "default": ",",
+      "description": "CSV field delimiter"
+    },
+    {
+      "name": "--xml-root",
+      "type": "string",
+      "default": "root",
+      "description": "Root element name for XML output"
+    },
+    {
+      "name": "--xml-item",
+      "type": "string",
+      "default": "item",
+      "description": "Element name for list items in XML output"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8",
+      "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+    },
+    {
+      "name": "pyyaml",
+      "type": "python",
+      "description": "Required for YAML parsing and serialization",
+      "install_hint": "pip install pyyaml"
+    },
+    {
+      "name": "toml",
+      "type": "python",
+      "description": "Required for TOML parsing and serialization",
+      "install_hint": "pip install toml"
+    }
+  ]
+}
