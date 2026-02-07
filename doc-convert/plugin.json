@@ -1,7 +1,7 @@
 {
   "name": "doc-convert",
   "scope": "uniconv",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Convert between document formats using LibreOffice",
   "author": "uniconv",
   "license": "MIT",
@@ -71,7 +71,9 @@
       "name": "--pages",
       "type": "string",
       "default": "",
-      "targets": ["pdf"],
+      "targets": [
+        "pdf"
+      ],
       "description": "Page range for output (e.g., '1-5', '1,3,5')"
     },
     {
