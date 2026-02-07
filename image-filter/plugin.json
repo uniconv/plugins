@@ -1,7 +1,7 @@
 {
   "name": "image-filter",
   "scope": "uniconv",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Apply image filters (grayscale, invert) using Python/Pillow",
   "author": "uniconv",
   "license": "MIT",
@@ -58,7 +58,11 @@
       "name": "--method",
       "type": "string",
       "default": "luminosity",
-      "targets": ["grayscale", "gray", "bw"],
+      "targets": [
+        "grayscale",
+        "gray",
+        "bw"
+      ],
       "description": "Grayscale conversion method: luminosity, average, or lightness"
     }
   ],
