@@ -38,60 +38,69 @@
       "name": "--width",
       "type": "int",
       "default": 256,
-      "description": "Image width (random-noise)"
+      "targets": ["random-noise"],
+      "description": "Image width in pixels"
     },
     {
       "name": "--height",
       "type": "int",
       "default": 256,
-      "description": "Image height (random-noise)"
+      "targets": ["random-noise"],
+      "description": "Image height in pixels"
     },
     {
       "name": "--count",
       "type": "int",
       "default": 10,
-      "description": "Number of items (random-names/urls/uuid/password)"
+      "targets": ["random-names", "random-urls", "random-uuid", "random-password"],
+      "description": "Number of items to generate"
     },
     {
       "name": "--length",
       "type": "int",
       "default": 16,
-      "description": "Password length (random-password)"
+      "targets": ["random-password"],
+      "description": "Character length of each password"
     },
     {
       "name": "--paragraphs",
       "type": "int",
       "default": 3,
-      "description": "Number of paragraphs (random-lorem)"
-    },
-    {
-      "name": "--locale",
-      "type": "string",
-      "default": "en_US",
-      "description": "Faker locale for data generation"
-    },
-    {
-      "name": "--seed",
-      "type": "int",
-      "description": "Random seed for reproducibility"
-    },
-    {
-      "name": "--columns",
-      "type": "string",
-      "default": "name,email,phone,address",
-      "description": "Column types for random-csv (comma-separated)"
+      "targets": ["random-lorem"],
+      "description": "Number of paragraphs to generate"
     },
     {
       "name": "--rows",
       "type": "int",
       "default": 100,
-      "description": "Number of rows (random-csv)"
+      "targets": ["random-csv"],
+      "description": "Number of rows to generate"
+    },
+    {
+      "name": "--columns",
+      "type": "string",
+      "default": "name,email,phone,address",
+      "targets": ["random-csv"],
+      "description": "Comma-separated column types (name, email, phone, address, company, date, city, country, job, text, url, uuid, number, boolean)"
     },
     {
       "name": "--format",
       "type": "string",
       "default": "json",
-      "description": "Output format for text targets: json or txt"
+      "targets": ["random-names", "random-urls", "random-lorem", "random-uuid", "random-password"],
+      "description": "Output format: json or txt"
+    },
+    {
+      "name": "--locale",
+      "type": "string",
+      "default": "en_US",
+      "targets": ["random-names", "random-urls", "random-lorem", "random-csv"],
+      "description": "Faker locale for data generation (e.g. en_US, ko_KR, ja_JP)"
+    },
+    {
+      "name": "--seed",
+      "type": "int",
+      "description": "Random seed for reproducible output"
     }
   ],
   "dependencies": [

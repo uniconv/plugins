@@ -46,7 +46,7 @@
       "name": "--fps",
       "type": "int",
       "default": "0",
-      "description": "Output frames per second (0 = keep original; default 10 for GIF)"
+      "description": "Output frames per second (0 = keep original)"
     },
     {
       "name": "--width",
@@ -78,7 +78,8 @@
       "name": "--loop",
       "type": "int",
       "default": "0",
-      "description": "Number of loops for GIF (0 = infinite)"
+      "targets": ["gif"],
+      "description": "Number of loops (0 = infinite)"
     }
   ],
   "dependencies": [

@@ -58,7 +58,8 @@
       "name": "--method",
       "type": "string",
       "default": "luminosity",
-      "description": "Grayscale conversion method: luminosity, average, or lightness (only applies to grayscale targets)"
+      "targets": ["grayscale", "gray", "bw"],
+      "description": "Grayscale conversion method: luminosity, average, or lightness"
     }
   ],
   "dependencies": [

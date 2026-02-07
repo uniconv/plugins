@@ -37,19 +37,22 @@
       "name": "--scale",
       "type": "int",
       "default": 10,
-      "description": "Pixels per module (generation only)"
+      "targets": ["qr"],
+      "description": "Pixels per module"
     },
     {
       "name": "--border",
       "type": "int",
       "default": 4,
-      "description": "Quiet zone in modules (generation only)"
+      "targets": ["qr"],
+      "description": "Quiet zone in modules"
     },
     {
       "name": "--error",
       "type": "string",
       "default": "M",
-      "description": "Error correction level: L/M/Q/H (generation only)"
+      "targets": ["qr"],
+      "description": "Error correction level: L, M, Q, or H"
     }
   ],
   "dependencies": [
