@@ -559,6 +559,10 @@ namespace
             if (ret < 0)
                 return av_err_str(ret, "Failed to open audio encoder");
 
+            // Tell buffersink to output frames matching encoder's required frame size
+            if (enc_ctx->frame_size > 0)
+                av_buffersink_set_frame_size(abuffersink_ctx, enc_ctx->frame_size);
+
             // ----- Create output stream -----
             AVStream *out_stream = avformat_new_stream(out_fmt_ctx.get(), nullptr);
             if (!out_stream)
