@@ -1,7 +1,7 @@
 {
   "name": "data-convert",
   "scope": "uniconv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert between structured data formats (JSON, YAML, TOML, XML, CSV)",
   "author": "uniconv",
   "license": "MIT",
@@ -47,35 +47,49 @@
       "name": "--indent",
       "type": "int",
       "default": 2,
-      "targets": ["json", "yaml", "xml"],
+      "targets": [
+        "json",
+        "yaml",
+        "xml"
+      ],
       "description": "Indentation spaces for formatted output"
     },
     {
       "name": "--no-pretty",
       "type": "bool",
       "default": false,
-      "targets": ["json", "yaml", "xml"],
+      "targets": [
+        "json",
+        "yaml",
+        "xml"
+      ],
       "description": "Compact output (no indentation)"
     },
     {
       "name": "--csv-delimiter",
       "type": "string",
       "default": ",",
-      "targets": ["csv"],
+      "targets": [
+        "csv"
+      ],
       "description": "CSV field delimiter"
     },
     {
       "name": "--xml-root",
       "type": "string",
       "default": "root",
-      "targets": ["xml"],
+      "targets": [
+        "xml"
+      ],
       "description": "Root element name for XML output"
     },
     {
       "name": "--xml-item",
       "type": "string",
       "default": "item",
-      "targets": ["xml"],
+      "targets": [
+        "xml"
+      ],
       "description": "Element name for list items in XML output"
     }
   ],
