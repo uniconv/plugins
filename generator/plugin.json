@@ -1,7 +1,7 @@
 {
   "name": "generator",
   "scope": "uniconv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate random test data: noise images, fake names, URLs, lorem ipsum, UUIDs, passwords, and CSV",
   "author": "uniconv",
   "license": "MIT",
@@ -38,63 +38,91 @@
       "name": "--width",
       "type": "int",
       "default": 256,
-      "targets": ["random-noise"],
+      "targets": [
+        "random-noise"
+      ],
       "description": "Image width in pixels"
     },
     {
       "name": "--height",
       "type": "int",
       "default": 256,
-      "targets": ["random-noise"],
+      "targets": [
+        "random-noise"
+      ],
       "description": "Image height in pixels"
     },
     {
       "name": "--count",
       "type": "int",
       "default": 10,
-      "targets": ["random-names", "random-urls", "random-uuid", "random-password"],
+      "targets": [
+        "random-names",
+        "random-urls",
+        "random-uuid",
+        "random-password"
+      ],
       "description": "Number of items to generate"
     },
     {
       "name": "--length",
       "type": "int",
       "default": 16,
-      "targets": ["random-password"],
+      "targets": [
+        "random-password"
+      ],
       "description": "Character length of each password"
     },
     {
       "name": "--paragraphs",
       "type": "int",
       "default": 3,
-      "targets": ["random-lorem"],
+      "targets": [
+        "random-lorem"
+      ],
       "description": "Number of paragraphs to generate"
     },
     {
       "name": "--rows",
       "type": "int",
       "default": 100,
-      "targets": ["random-csv"],
+      "targets": [
+        "random-csv"
+      ],
       "description": "Number of rows to generate"
     },
     {
       "name": "--columns",
       "type": "string",
       "default": "name,email,phone,address",
-      "targets": ["random-csv"],
+      "targets": [
+        "random-csv"
+      ],
       "description": "Comma-separated column types (name, email, phone, address, company, date, city, country, job, text, url, uuid, number, boolean)"
     },
     {
       "name": "--format",
       "type": "string",
       "default": "json",
-      "targets": ["random-names", "random-urls", "random-lorem", "random-uuid", "random-password"],
+      "targets": [
+        "random-names",
+        "random-urls",
+        "random-lorem",
+        "random-uuid",
+        "random-password"
+      ],
       "description": "Output format: json or txt"
     },
     {
       "name": "--locale",
       "type": "string",
       "default": "en_US",
-      "targets": ["random-names", "random-urls", "random-lorem", "random-csv"],
+      "targets": [
+        "random-names",
+        "random-urls",
+        "random-lorem",
+        "random-csv"
+      ],
       "description": "Faker locale for data generation (e.g. en_US, ko_KR, ja_JP)"
     },
     {
