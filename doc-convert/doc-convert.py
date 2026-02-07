@@ -83,6 +83,81 @@ def find_pandoc():
     return shutil.which('pandoc')
 
 
+def find_hwp5_tool(tool_name):
+    """Find a hwp5 CLI tool (e.g., hwp5odt, hwp5txt, hwp5html)."""
+    return shutil.which(tool_name)
+
+
+# Direct hwp5 tool mapping: target format -> (tool name, output extension)
+HWP5_DIRECT_TARGETS = {
+    'odt': 'hwp5odt',
+    'txt': 'hwp5txt',
+    'html': 'hwp5html',
+}
+
+
+def convert_hwp_with_pyhwp(input_path, output_path, target_format):
+    """
+    Convert HWP files using pyhwp (hwp5 tools).
+
+    For odt/txt/html targets, uses the corresponding hwp5 tool directly.
+    For other targets (pdf, docx, etc.), converts HWP -> ODT first,
+    then passes the ODT to LibreOffice.
+    """
+    target_format = target_format.lower().lstrip('.')
+
+    # Direct conversion for supported targets
+    if target_format in HWP5_DIRECT_TARGETS:
+        tool_name = HWP5_DIRECT_TARGETS[target_format]
+        tool_path = find_hwp5_tool(tool_name)
+        if not tool_path:
+            return None  # signal that pyhwp is not available
+
+        try:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_output = os.path.join(temp_dir, f"output.{target_format}")
+                cmd = [tool_path, input_path, temp_output]
+                result = subprocess.run(
+                    cmd, capture_output=True, text=True, timeout=300
+                )
+                if result.returncode != 0:
+                    error_msg = result.stderr or result.stdout or "Unknown error"
+                    return False, f"hwp5 conversion failed: {error_msg}"
+                if not os.path.exists(temp_output):
+                    return False, f"{tool_name} produced no output file"
+                shutil.move(temp_output, output_path)
+                return True, None
+        except subprocess.TimeoutExpired:
+            return False, f"{tool_name} conversion timed out"
+        except Exception as e:
+            return False, str(e)
+
+    # Two-step conversion: HWP -> ODT -> target via LibreOffice
+    odt_tool = find_hwp5_tool('hwp5odt')
+    if not odt_tool:
+        return None  # signal that pyhwp is not available
+
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_odt = os.path.join(temp_dir, "intermediate.odt")
+            cmd = [odt_tool, input_path, temp_odt]
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, timeout=300
+            )
+            if result.returncode != 0:
+                error_msg = result.stderr or result.stdout or "Unknown error"
+                return False, f"hwp5odt conversion failed: {error_msg}"
+            if not os.path.exists(temp_odt):
+                return False, "hwp5odt produced no output file"
+
+            # Now convert ODT -> target using LibreOffice
+            return convert_with_libreoffice(temp_odt, output_path, target_format)
+    except subprocess.TimeoutExpired:
+        return False, "hwp5odt conversion timed out"
+    except Exception as e:
+        return False, str(e)
+
+
 def get_format_category(fmt):
     """Determine the format category."""
     fmt = fmt.lower().lstrip('.')
@@ -263,6 +338,13 @@ def convert_document(input_path, output_path, target_format, password=None, inpu
     else:
         input_ext = Path(input_path).suffix.lower().lstrip('.')
     target_format = target_format.lower().lstrip('.')
+
+    # HWP files: try pyhwp first (LibreOffice on macOS often lacks HWP filter)
+    if input_ext == 'hwp':
+        hwp_result = convert_hwp_with_pyhwp(input_path, output_path, target_format)
+        if hwp_result is not None:
+            return hwp_result
+        # pyhwp not available — fall through to LibreOffice
 
     # PDF to DOCX uses pdf2docx library (LibreOffice can't do this)
     if input_ext == 'pdf' and target_format in ('docx', 'doc'):

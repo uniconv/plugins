@@ -106,6 +106,13 @@
       "type": "python",
       "version": ">=0.5.0",
       "description": "Required for PDF to DOCX conversion"
+    },
+    {
+      "name": "pyhwp",
+      "type": "python",
+      "optional": true,
+      "description": "Required for HWP conversion on systems where LibreOffice lacks the HWP filter",
+      "install_hint": "pip install pyhwp"
     }
   ]
 }
