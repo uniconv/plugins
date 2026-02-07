@@ -1,0 +1,117 @@
+{
+  "name": "generator",
+  "scope": "uniconv",
+  "version": "0.0.0",
+  "description": "Generate random test data: noise images, fake names, URLs, lorem ipsum, UUIDs, passwords, and CSV",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "generator",
+    "random",
+    "noise",
+    "faker",
+    "uuid",
+    "password",
+    "csv",
+    "lorem",
+    "test-data"
+  ],
+  "interface": "cli",
+  "executable": "generator.py",
+  "targets": [
+    "random-noise",
+    "random-names",
+    "random-urls",
+    "random-lorem",
+    "random-uuid",
+    "random-password",
+    "random-csv"
+  ],
+  "input_formats": [],
+  "input_types": [],
+  "output_types": [
+    "file"
+  ],
+  "options": [
+    {
+      "name": "--width",
+      "type": "int",
+      "default": 256,
+      "description": "Image width (random-noise)"
+    },
+    {
+      "name": "--height",
+      "type": "int",
+      "default": 256,
+      "description": "Image height (random-noise)"
+    },
+    {
+      "name": "--count",
+      "type": "int",
+      "default": 10,
+      "description": "Number of items (random-names/urls/uuid/password)"
+    },
+    {
+      "name": "--length",
+      "type": "int",
+      "default": 16,
+      "description": "Password length (random-password)"
+    },
+    {
+      "name": "--paragraphs",
+      "type": "int",
+      "default": 3,
+      "description": "Number of paragraphs (random-lorem)"
+    },
+    {
+      "name": "--locale",
+      "type": "string",
+      "default": "en_US",
+      "description": "Faker locale for data generation"
+    },
+    {
+      "name": "--seed",
+      "type": "int",
+      "description": "Random seed for reproducibility"
+    },
+    {
+      "name": "--columns",
+      "type": "string",
+      "default": "name,email,phone,address",
+      "description": "Column types for random-csv (comma-separated)"
+    },
+    {
+      "name": "--rows",
+      "type": "int",
+      "default": 100,
+      "description": "Number of rows (random-csv)"
+    },
+    {
+      "name": "--format",
+      "type": "string",
+      "default": "json",
+      "description": "Output format for text targets: json or txt"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8",
+      "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+    },
+    {
+      "name": "Pillow",
+      "type": "python",
+      "description": "Required for random-noise image generation",
+      "install_hint": "pip install Pillow"
+    },
+    {
+      "name": "faker",
+      "type": "python",
+      "description": "Required for generating fake data (names, URLs, lorem, CSV)",
+      "install_hint": "pip install faker"
+    }
+  ]
+}
