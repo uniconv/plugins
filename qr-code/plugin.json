@@ -1,0 +1,88 @@
+{
+  "name": "qr-code",
+  "scope": "uniconv",
+  "version": "0.0.0",
+  "description": "Generate and decode QR codes",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "qr",
+    "qr-code",
+    "barcode",
+    "qrcode",
+    "encode",
+    "decode"
+  ],
+  "interface": "cli",
+  "executable": "qr-code.py",
+  "targets": [
+    "qr",
+    "qr-decode"
+  ],
+  "input_formats": [
+    "txt",
+    "png",
+    "jpg",
+    "jpeg"
+  ],
+  "input_types": [
+    "file"
+  ],
+  "output_types": [
+    "file"
+  ],
+  "options": [
+    {
+      "name": "--scale",
+      "type": "int",
+      "default": 10,
+      "description": "Pixels per module (generation only)"
+    },
+    {
+      "name": "--border",
+      "type": "int",
+      "default": 4,
+      "description": "Quiet zone in modules (generation only)"
+    },
+    {
+      "name": "--error",
+      "type": "string",
+      "default": "M",
+      "description": "Error correction level: L/M/Q/H (generation only)"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8",
+      "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+    },
+    {
+      "name": "segno",
+      "type": "python",
+      "description": "Required for QR code generation",
+      "install_hint": "pip install segno"
+    },
+    {
+      "name": "zbar",
+      "type": "system",
+      "check": "which zbarimg",
+      "description": "Required by pyzbar for QR code decoding",
+      "install_hint": "brew install zbar (macOS) or apt install libzbar0 (Linux)"
+    },
+    {
+      "name": "Pillow",
+      "type": "python",
+      "description": "Required for QR code decoding",
+      "install_hint": "pip install Pillow"
+    },
+    {
+      "name": "pyzbar",
+      "type": "python",
+      "description": "Required for QR code decoding",
+      "install_hint": "pip install pyzbar"
+    }
+  ]
+}
