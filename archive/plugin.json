@@ -1,0 +1,84 @@
+{
+  "name": "archive",
+  "scope": "uniconv",
+  "version": "1.0.0",
+  "description": "Archive and compression support (zip, tar, gz, bz2, xz, 7z)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "archive",
+    "zip",
+    "tar",
+    "gz",
+    "bz2",
+    "xz",
+    "7z",
+    "compress",
+    "decompress",
+    "extract"
+  ],
+  "interface": "cli",
+  "executable": "archive.py",
+  "targets": [
+    "decompress",
+    "extract",
+    "zip",
+    "tar",
+    "tar-gz",
+    "tgz",
+    "tar-bz2",
+    "tbz2",
+    "tar-xz",
+    "txz",
+    "gz"
+  ],
+  "input_formats": [
+    "zip",
+    "tar",
+    "tar.gz",
+    "tgz",
+    "tar.bz2",
+    "tbz2",
+    "tar.xz",
+    "txz",
+    "gz",
+    "bz2",
+    "xz",
+    "7z"
+  ],
+  "input_types": [
+    "file"
+  ],
+  "output_types": [
+    "file"
+  ],
+  "options": [
+    {
+      "name": "--compression-level",
+      "type": "int",
+      "default": 6,
+      "targets": [
+        "zip",
+        "gz",
+        "tar-gz",
+        "tgz"
+      ],
+      "description": "Compression level (1-9, where 9 is maximum compression)"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8",
+      "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+    },
+    {
+      "name": "py7zr",
+      "type": "python",
+      "description": "Required for 7z archive support (optional)",
+      "install_hint": "pip install py7zr"
+    }
+  ]
+}
