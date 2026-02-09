@@ -15,9 +15,7 @@
   "interface": "cli",
   "executable": "ascii.py",
   "targets": [
-    "ascii",
-    "ascii-art",
-    "text-art"
+    "ascii"
   ],
   "input_formats": [
     "jpg",

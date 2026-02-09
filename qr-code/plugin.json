@@ -68,7 +68,7 @@
       "targets": [
         "qr"
       ],
-      "description": "Error correction level"
+      "description": "Error correction: L (7%), M (15%), Q (25%), H (30%)"
     }
   ],
   "dependencies": [

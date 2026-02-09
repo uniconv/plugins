@@ -17,10 +17,7 @@
   "executable": "image_filter.py",
   "targets": [
     "grayscale",
-    "gray",
-    "bw",
-    "invert",
-    "negative"
+    "invert"
   ],
   "input_formats": [
     "jpg",
@@ -68,9 +65,7 @@
         "lightness"
       ],
       "targets": [
-        "grayscale",
-        "gray",
-        "bw"
+        "grayscale"
       ],
       "description": "Grayscale conversion method"
     }
