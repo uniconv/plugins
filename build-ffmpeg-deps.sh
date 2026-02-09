@@ -160,8 +160,7 @@ if [[ "$BUILD_FFMPEG" == "true" ]]; then
             --enable-libdav1d
             --enable-libsvtav1
             --enable-libvorbis
-            # Point to our custom-built deps
-            --pkg-config-flags="--static"
+            # Point to our custom-built deps (dav1d, SVT-AV1)
             --extra-cflags="-I$PREFIX/include"
             --extra-ldflags="-L$PREFIX/lib"
         )
