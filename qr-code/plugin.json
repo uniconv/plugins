@@ -1,7 +1,7 @@
 {
   "name": "qr-code",
   "scope": "uniconv",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate and decode QR codes",
   "author": "uniconv",
   "license": "MIT",
@@ -59,7 +59,12 @@
       "name": "--error",
       "type": "string",
       "default": "M",
-      "choices": ["L", "M", "Q", "H"],
+      "choices": [
+        "L",
+        "M",
+        "Q",
+        "H"
+      ],
       "targets": [
         "qr"
       ],
