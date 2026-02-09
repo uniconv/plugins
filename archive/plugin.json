@@ -58,13 +58,15 @@
       "name": "--compression-level",
       "type": "int",
       "default": 6,
+      "min": 1,
+      "max": 9,
       "targets": [
         "zip",
         "gz",
         "tar-gz",
         "tgz"
       ],
-      "description": "Compression level (1-9, where 9 is maximum compression)"
+      "description": "Compression level (9 = maximum)"
     }
   ],
   "dependencies": [

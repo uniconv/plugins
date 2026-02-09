@@ -38,31 +38,34 @@
     {
       "name": "--width",
       "type": "int",
-      "default": "80",
+      "default": 80,
+      "min": 10,
+      "max": 300,
       "description": "Output width in characters"
     },
     {
       "name": "--charset",
       "type": "string",
       "default": "standard",
-      "description": "Character set: standard, simple, blocks, detailed"
+      "choices": ["standard", "simple", "blocks", "detailed"],
+      "description": "Character set to use"
     },
     {
       "name": "--invert",
       "type": "bool",
-      "default": "false",
+      "default": false,
       "description": "Invert brightness (for dark backgrounds)"
     },
     {
       "name": "--color",
       "type": "bool",
-      "default": "false",
+      "default": false,
       "description": "Output ANSI colored ASCII art"
     },
     {
       "name": "--html",
       "type": "bool",
-      "default": "false",
+      "default": false,
       "description": "Output HTML with colored spans"
     }
   ],

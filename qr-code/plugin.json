@@ -37,6 +37,8 @@
       "name": "--scale",
       "type": "int",
       "default": 10,
+      "min": 1,
+      "max": 50,
       "targets": [
         "qr"
       ],
@@ -46,19 +48,22 @@
       "name": "--border",
       "type": "int",
       "default": 4,
+      "min": 0,
+      "max": 20,
       "targets": [
         "qr"
       ],
-      "description": "Quiet zone in modules"
+      "description": "Quiet zone border in modules"
     },
     {
       "name": "--error",
       "type": "string",
       "default": "M",
+      "choices": ["L", "M", "Q", "H"],
       "targets": [
         "qr"
       ],
-      "description": "Error correction level: L, M, Q, or H"
+      "description": "Error correction level"
     }
   ],
   "dependencies": [

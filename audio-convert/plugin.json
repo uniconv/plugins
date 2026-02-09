@@ -62,32 +62,41 @@
     {
       "name": "--bitrate",
       "type": "string",
-      "description": "Output bitrate (e.g., '128k', '320k')"
+      "default": "128k",
+      "choices": ["64k", "128k", "192k", "256k", "320k"],
+      "description": "Output bitrate"
     },
     {
       "name": "--sample-rate",
       "type": "int",
-      "description": "Output sample rate in Hz (e.g., 44100, 48000)"
+      "choices": ["8000", "22050", "44100", "48000", "96000"],
+      "description": "Output sample rate in Hz"
     },
     {
       "name": "--channels",
       "type": "int",
-      "description": "Number of output channels (1 = mono, 2 = stereo)"
+      "min": 1,
+      "max": 2,
+      "description": "Output channels (1 = mono, 2 = stereo)"
     },
     {
       "name": "--volume",
       "type": "float",
       "default": "1.0",
-      "description": "Volume adjustment factor (e.g., 0.5 = half, 2.0 = double)"
+      "min": 0.0,
+      "max": 5.0,
+      "description": "Volume adjustment (0.5 = half, 2.0 = double)"
     },
     {
       "name": "--start",
       "type": "float",
+      "min": 0.0,
       "description": "Start time in seconds"
     },
     {
       "name": "--duration",
       "type": "float",
+      "min": 0.0,
       "description": "Duration in seconds"
     }
   ],

@@ -38,6 +38,8 @@
       "name": "--width",
       "type": "int",
       "default": 256,
+      "min": 1,
+      "max": 4096,
       "targets": [
         "random-noise"
       ],
@@ -47,6 +49,8 @@
       "name": "--height",
       "type": "int",
       "default": 256,
+      "min": 1,
+      "max": 4096,
       "targets": [
         "random-noise"
       ],
@@ -56,6 +60,8 @@
       "name": "--count",
       "type": "int",
       "default": 10,
+      "min": 1,
+      "max": 1000,
       "targets": [
         "random-names",
         "random-urls",
@@ -68,28 +74,34 @@
       "name": "--length",
       "type": "int",
       "default": 16,
+      "min": 4,
+      "max": 128,
       "targets": [
         "random-password"
       ],
-      "description": "Character length of each password"
+      "description": "Password length in characters"
     },
     {
       "name": "--paragraphs",
       "type": "int",
       "default": 3,
+      "min": 1,
+      "max": 50,
       "targets": [
         "random-lorem"
       ],
-      "description": "Number of paragraphs to generate"
+      "description": "Number of paragraphs"
     },
     {
       "name": "--rows",
       "type": "int",
       "default": 100,
+      "min": 1,
+      "max": 10000,
       "targets": [
         "random-csv"
       ],
-      "description": "Number of rows to generate"
+      "description": "Number of rows"
     },
     {
       "name": "--columns",
@@ -104,6 +116,7 @@
       "name": "--format",
       "type": "string",
       "default": "json",
+      "choices": ["json", "txt"],
       "targets": [
         "random-names",
         "random-urls",
@@ -111,19 +124,20 @@
         "random-uuid",
         "random-password"
       ],
-      "description": "Output format: json or txt"
+      "description": "Output format"
     },
     {
       "name": "--locale",
       "type": "string",
       "default": "en_US",
+      "choices": ["en_US", "ko_KR", "ja_JP", "zh_CN", "de_DE", "fr_FR", "es_ES"],
       "targets": [
         "random-names",
         "random-urls",
         "random-lorem",
         "random-csv"
       ],
-      "description": "Faker locale for data generation (e.g. en_US, ko_KR, ja_JP)"
+      "description": "Locale for data generation"
     },
     {
       "name": "--seed",

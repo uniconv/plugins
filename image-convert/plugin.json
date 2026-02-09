@@ -53,19 +53,24 @@
       "name": "--quality",
       "short": "-q",
       "type": "int",
-      "description": "Output quality (1-100)"
+      "min": 1,
+      "max": 100,
+      "default": 85,
+      "description": "Output image quality"
     },
     {
       "name": "--width",
       "short": "-w",
       "type": "int",
-      "description": "Output width (aspect ratio preserved)"
+      "min": 1,
+      "description": "Output width in pixels (aspect ratio preserved)"
     },
     {
       "name": "--height",
       "short": "-h",
       "type": "int",
-      "description": "Output height (aspect ratio preserved)"
+      "min": 1,
+      "description": "Output height in pixels (aspect ratio preserved)"
     }
   ],
   "dependencies": [

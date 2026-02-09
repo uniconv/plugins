@@ -47,12 +47,14 @@
       "name": "--indent",
       "type": "int",
       "default": 2,
+      "min": 0,
+      "max": 8,
       "targets": [
         "json",
         "yaml",
         "xml"
       ],
-      "description": "Indentation spaces for formatted output"
+      "description": "Indentation spaces"
     },
     {
       "name": "--no-pretty",
@@ -69,10 +71,11 @@
       "name": "--csv-delimiter",
       "type": "string",
       "default": ",",
+      "choices": [",", "\t", ";", "|"],
       "targets": [
         "csv"
       ],
-      "description": "CSV field delimiter"
+      "description": "Field delimiter"
     },
     {
       "name": "--xml-root",

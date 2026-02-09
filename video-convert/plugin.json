@@ -45,43 +45,52 @@
     {
       "name": "--fps",
       "type": "int",
-      "default": "0",
-      "description": "Output frames per second (0 = keep original)"
+      "default": 0,
+      "min": 0,
+      "max": 120,
+      "description": "Frames per second (0 = keep original)"
     },
     {
       "name": "--width",
       "type": "int",
-      "description": "Output width in pixels (height auto-scaled to preserve aspect ratio)"
+      "min": 1,
+      "description": "Output width in pixels (aspect ratio preserved)"
     },
     {
       "name": "--height",
       "type": "int",
-      "description": "Output height in pixels (width auto-scaled to preserve aspect ratio)"
+      "min": 1,
+      "description": "Output height in pixels (aspect ratio preserved)"
     },
     {
       "name": "--quality",
       "type": "int",
-      "default": "75",
-      "description": "Output quality (1-100, higher is better)"
+      "default": 75,
+      "min": 1,
+      "max": 100,
+      "description": "Output quality"
     },
     {
       "name": "--start",
       "type": "float",
+      "min": 0.0,
       "description": "Start time in seconds"
     },
     {
       "name": "--duration",
       "type": "float",
+      "min": 0.0,
       "description": "Duration in seconds"
     },
     {
       "name": "--loop",
       "type": "int",
-      "default": "0",
+      "default": 0,
+      "min": 0,
       "targets": [
         "gif"
       ],
-      "description": "Number of loops (0 = infinite)"
+      "description": "Loop count (0 = infinite)"
     }
   ],
   "dependencies": [
