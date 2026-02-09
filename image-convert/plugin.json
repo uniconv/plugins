@@ -1,7 +1,7 @@
 {
   "name": "image-convert",
   "scope": "uniconv",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Image format conversion using libvips",
   "author": "uniconv",
   "license": "MIT",
