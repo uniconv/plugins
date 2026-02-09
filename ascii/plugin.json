@@ -1,7 +1,7 @@
 {
   "name": "ascii",
   "scope": "uniconv",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Convert media to ASCII representation",
   "author": "uniconv",
   "license": "MIT",
@@ -47,7 +47,12 @@
       "name": "--charset",
       "type": "string",
       "default": "standard",
-      "choices": ["standard", "simple", "blocks", "detailed"],
+      "choices": [
+        "standard",
+        "simple",
+        "blocks",
+        "detailed"
+      ],
       "description": "Character set to use"
     },
     {
