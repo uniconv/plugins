@@ -103,13 +103,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            cmake build-essential pkg-config meson ninja-build nasm \
+            cmake build-essential pkg-config meson ninja-build nasm yasm \
             libvips-dev \
-            libavformat-dev libavcodec-dev libavutil-dev \
-            libswscale-dev libswresample-dev libavfilter-dev \
             libx264-dev libx265-dev libvpx-dev \
             libopus-dev libmp3lame-dev \
-            libdav1d-dev libsvtav1enc-dev
+            libvorbis-dev libogg-dev
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
@@ -121,11 +119,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: third-party/${{ matrix.platform }}
-          key: ffmpeg-deps-${{ matrix.platform }}-v1
+          key: ffmpeg-deps-${{ matrix.platform }}-v2
 
-      - name: Build static FFmpeg deps (Unix)
-        if: matrix.platform != 'windows-x86_64'
+      - name: Build static FFmpeg deps (macOS)
+        if: runner.os == 'macOS'
         run: ./build-ffmpeg-deps.sh
+
+      - name: Build static FFmpeg deps (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: ./build-ffmpeg-deps.sh --build-ffmpeg
 
       - name: Build native plugin (Unix)
         if: matrix.platform != 'windows-x86_64'

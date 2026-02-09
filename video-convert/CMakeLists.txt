@@ -14,6 +14,12 @@ set(DEPS_PREFIX "" CACHE PATH "Path to pre-built static dependencies (from build
 # Discover FFmpeg modules via pkg-config
 find_package(PkgConfig REQUIRED)
 set(FFMPEG_MODULES libavformat libavcodec libavutil libswscale libavfilter)
+
+# Use custom-built FFmpeg from DEPS_PREFIX if available
+if(DEPS_PREFIX AND EXISTS "${DEPS_PREFIX}/lib/pkgconfig")
+    set(ENV{PKG_CONFIG_PATH} "${DEPS_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}")
+    message(STATUS "Prepended PKG_CONFIG_PATH: ${DEPS_PREFIX}/lib/pkgconfig")
+endif()
 pkg_check_modules(AVFORMAT REQUIRED libavformat)
 pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
