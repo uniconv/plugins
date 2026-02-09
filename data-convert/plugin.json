@@ -1,7 +1,7 @@
 {
   "name": "data-convert",
   "scope": "uniconv",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Convert between structured data formats (JSON, YAML, TOML, XML, CSV)",
   "author": "uniconv",
   "license": "MIT",
@@ -71,7 +71,12 @@
       "name": "--csv-delimiter",
       "type": "string",
       "default": ",",
-      "choices": [",", "\t", ";", "|"],
+      "choices": [
+        ",",
+        "\t",
+        ";",
+        "|"
+      ],
       "targets": [
         "csv"
       ],
