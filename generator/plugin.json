@@ -1,7 +1,7 @@
 {
   "name": "generator",
   "scope": "uniconv",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generate random test data: noise images, fake names, URLs, lorem ipsum, UUIDs, passwords, and CSV",
   "author": "uniconv",
   "license": "MIT",
@@ -116,7 +116,10 @@
       "name": "--format",
       "type": "string",
       "default": "json",
-      "choices": ["json", "txt"],
+      "choices": [
+        "json",
+        "txt"
+      ],
       "targets": [
         "random-names",
         "random-urls",
@@ -130,7 +133,15 @@
       "name": "--locale",
       "type": "string",
       "default": "en_US",
-      "choices": ["en_US", "ko_KR", "ja_JP", "zh_CN", "de_DE", "fr_FR", "es_ES"],
+      "choices": [
+        "en_US",
+        "ko_KR",
+        "ja_JP",
+        "zh_CN",
+        "de_DE",
+        "fr_FR",
+        "es_ES"
+      ],
       "targets": [
         "random-names",
         "random-urls",
