@@ -103,22 +103,41 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            cmake build-essential pkg-config \
+            cmake build-essential pkg-config meson ninja-build nasm \
             libvips-dev \
             libavformat-dev libavcodec-dev libavutil-dev \
-            libswscale-dev libavfilter-dev
+            libswscale-dev libswresample-dev libavfilter-dev \
+            libx264-dev libx265-dev libvpx-dev \
+            libopus-dev libmp3lame-dev \
+            libdav1d-dev libsvtav1enc-dev
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: brew install pkg-config vips ffmpeg
+        run: brew install pkg-config vips ffmpeg meson ninja nasm
+
+      - name: Cache static FFmpeg deps
+        if: matrix.platform != 'windows-x86_64'
+        uses: actions/cache@v4
+        with:
+          path: third-party/${{ matrix.platform }}
+          key: ffmpeg-deps-${{ matrix.platform }}-v1
+
+      - name: Build static FFmpeg deps (Unix)
+        if: matrix.platform != 'windows-x86_64'
+        run: ./build-ffmpeg-deps.sh
 
       - name: Build native plugin (Unix)
         if: matrix.platform != 'windows-x86_64'
         run: |
+          DEPS_PREFIX="${{ github.workspace }}/third-party/${{ matrix.platform }}"
           cd ${{ needs.detect.outputs.name }}
           mkdir -p build && cd build
-          cmake -DUNICONV_INCLUDE_DIR=${{ github.workspace }}/uniconv/include ..
+          cmake \
+            -DUNICONV_INCLUDE_DIR=${{ github.workspace }}/uniconv/include \
+            -DFFMPEG_STATIC=ON \
+            -DDEPS_PREFIX="$DEPS_PREFIX" \
+            ..
           cmake --build .
 
       - name: Build native plugin (Windows)
@@ -127,7 +146,9 @@ jobs:
           cd ${{ needs.detect.outputs.name }}
           mkdir -p build && cd build
           cmake -G "MinGW Makefiles" \
-            -DUNICONV_INCLUDE_DIR="$(cygpath -u '${{ github.workspace }}')/uniconv/include" ..
+            -DUNICONV_INCLUDE_DIR="$(cygpath -u '${{ github.workspace }}')/uniconv/include" \
+            -DFFMPEG_STATIC=ON \
+            ..
           cmake --build .
 
       - name: Package native plugin
