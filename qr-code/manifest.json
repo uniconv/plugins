@@ -53,7 +53,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.2/qr-code-1.0.2.tar.gz",
-          "sha256": ""
+          "sha256": "e9fb1e9ad73f904489375e7f7accdf95f080b85d77698642f9d61fb0346c20c2"
         }
       }
     },
