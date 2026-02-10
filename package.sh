@@ -221,6 +221,20 @@ $dep" ;;
         fi
     done
 
+    # Strip all RPATHs except @loader_path (removes build-time Homebrew paths
+    # that won't exist on other machines)
+    for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
+        [[ -f "$lib" ]] || continue
+        local rpaths
+        rpaths=$(otool -l "$lib" 2>/dev/null \
+            | awk '/cmd LC_RPATH/{getline;getline;print $2}' || true)
+        while IFS= read -r rp; do
+            [[ -z "$rp" ]] && continue
+            [[ "$rp" == "@loader_path" ]] && continue
+            install_name_tool -delete_rpath "$rp" "$lib" 2>/dev/null || true
+        done <<< "$rpaths"
+    done
+
     # Re-sign after patching (required on Apple Silicon)
     for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
         [[ -f "$lib" ]] || continue
