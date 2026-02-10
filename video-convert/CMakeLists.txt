@@ -130,6 +130,12 @@ if(FFMPEG_STATIC)
 
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${_ORIG_SUFFIXES})
 
+    # On Linux, FFmpeg's NEON/asm uses relocations incompatible with shared libs;
+    # -Bsymbolic prevents symbol interposition, making them safe.
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        target_link_options(video_convert PRIVATE "-Wl,-Bsymbolic")
+    endif()
+
     # Link everything
     target_link_directories(video_convert PRIVATE ${_SEARCH_DIRS})
     target_link_libraries(video_convert PRIVATE
