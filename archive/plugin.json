@@ -1,7 +1,7 @@
 {
   "name": "archive",
   "scope": "uniconv",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Archive and compression support (zip, tar, gz, bz2, xz, 7z)",
   "author": "uniconv",
   "license": "MIT",
