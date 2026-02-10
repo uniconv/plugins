@@ -79,6 +79,11 @@ if(FFMPEG_STATIC)
     list(REMOVE_DUPLICATES _FRAMEWORK_FLAGS)
     list(REMOVE_DUPLICATES _OTHER_FLAGS)
 
+    # Remove libraries that don't exist on Windows
+    if(WIN32)
+        list(REMOVE_ITEM _LINK_LIBS "dl")
+    endif()
+
     # Set suffixes to find only static .a files
     set(_ORIG_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
     if(WIN32)
