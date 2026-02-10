@@ -1,7 +1,7 @@
 {
   "name": "qr-code",
   "scope": "uniconv",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Generate and decode QR codes",
   "author": "uniconv",
   "license": "MIT",
@@ -17,7 +17,10 @@
   "interface": "cli",
   "executable": "qr-code.py",
   "bundled_libs": [
-    {"pkg_config": "zbar", "lib_name": "zbar"}
+    {
+      "pkg_config": "zbar",
+      "lib_name": "zbar"
+    }
   ],
   "targets": [
     "qr",
