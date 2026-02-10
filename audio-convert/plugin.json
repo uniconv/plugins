@@ -111,37 +111,5 @@
       "min": 0.0,
       "description": "Duration in seconds"
     }
-  ],
-  "dependencies": [
-    {
-      "name": "libavformat-dev",
-      "type": "system",
-      "check": "pkg-config --exists libavformat",
-      "install_hint": "brew install ffmpeg (macOS) or apt install libavformat-dev (Linux)"
-    },
-    {
-      "name": "libavcodec-dev",
-      "type": "system",
-      "check": "pkg-config --exists libavcodec",
-      "install_hint": "brew install ffmpeg (macOS) or apt install libavcodec-dev (Linux)"
-    },
-    {
-      "name": "libavutil-dev",
-      "type": "system",
-      "check": "pkg-config --exists libavutil",
-      "install_hint": "brew install ffmpeg (macOS) or apt install libavutil-dev (Linux)"
-    },
-    {
-      "name": "libswresample-dev",
-      "type": "system",
-      "check": "pkg-config --exists libswresample",
-      "install_hint": "brew install ffmpeg (macOS) or apt install libswresample-dev (Linux)"
-    },
-    {
-      "name": "libavfilter-dev",
-      "type": "system",
-      "check": "pkg-config --exists libavfilter",
-      "install_hint": "brew install ffmpeg (macOS) or apt install libavfilter-dev (Linux)"
-    }
   ]
 }

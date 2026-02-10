@@ -52,6 +52,182 @@ detect_platform() {
 
 PLATFORM="${PLATFORM:-$(detect_platform)}"
 
+# ---------------------------------------------------------------------------
+# Shared library bundling: collect transitive deps and patch load paths
+# ---------------------------------------------------------------------------
+
+# System libraries to never bundle (Linux)
+_LINUX_SYSTEM_LIBS="linux-vdso|ld-linux|libc\\.so|libm\\.so|libdl\\.so|librt\\.so|libpthread\\.so|libstdc\\+\\+|libgcc_s|libmvec\\.so"
+
+_collect_deps_linux() {
+    local plugin_lib="$1"
+    local dest_dir="$2"
+
+    echo "  Collecting shared library dependencies (Linux)..."
+
+    # Get transitive deps via ldd, filter out system libs
+    local deps
+    deps=$(ldd "$plugin_lib" 2>/dev/null \
+        | grep -oP '\S+\.so\S*\s+=>\s+\K/\S+' \
+        | grep -vE "$_LINUX_SYSTEM_LIBS" \
+        || true)
+
+    if [[ -z "$deps" ]]; then
+        echo "  No non-system dependencies to bundle."
+        return
+    fi
+
+    # Copy deps (dereference symlinks)
+    while IFS= read -r dep; do
+        local basename
+        basename=$(basename "$dep")
+        if [[ ! -f "$dest_dir/$basename" ]]; then
+            cp -L "$dep" "$dest_dir/$basename"
+            echo "    Bundled: $basename"
+        fi
+    done <<< "$deps"
+
+    # Patch RPATH on plugin and all bundled libs
+    for lib in "$dest_dir"/*.so*; do
+        patchelf --set-rpath '$ORIGIN' "$lib" 2>/dev/null || true
+    done
+}
+
+_collect_deps_darwin() {
+    local plugin_lib="$1"
+    local dest_dir="$2"
+
+    echo "  Collecting shared library dependencies (macOS)..."
+
+    # BFS to collect transitive dylib dependencies
+    local -a queue=("$plugin_lib")
+    local -A visited=()
+    local -A to_bundle=()  # original_path -> basename
+
+    while [[ ${#queue[@]} -gt 0 ]]; do
+        local current="${queue[0]}"
+        queue=("${queue[@]:1}")
+
+        local current_real
+        current_real=$(realpath "$current" 2>/dev/null || echo "$current")
+        [[ -n "${visited[$current_real]+x}" ]] && continue
+        visited[$current_real]=1
+
+        # Get dependencies
+        local deps
+        deps=$(otool -L "$current" 2>/dev/null \
+            | tail -n +2 \
+            | awk '{print $1}' \
+            || true)
+
+        while IFS= read -r dep; do
+            [[ -z "$dep" ]] && continue
+            # Skip system libs, self-references, and already-patched refs
+            [[ "$dep" == /usr/lib/* ]] && continue
+            [[ "$dep" == /System/* ]] && continue
+            [[ "$dep" == @rpath/* ]] && continue
+            [[ "$dep" == @loader_path/* ]] && continue
+            [[ "$dep" == @executable_path/* ]] && continue
+
+            if [[ -f "$dep" ]]; then
+                local dep_base
+                dep_base=$(basename "$dep")
+                to_bundle[$dep]="$dep_base"
+                local dep_real
+                dep_real=$(realpath "$dep" 2>/dev/null || echo "$dep")
+                if [[ -z "${visited[$dep_real]+x}" ]]; then
+                    queue+=("$dep")
+                fi
+            fi
+        done <<< "$deps"
+    done
+
+    if [[ ${#to_bundle[@]} -eq 0 ]]; then
+        echo "  No non-system dependencies to bundle."
+        return
+    fi
+
+    # Copy deps to staging dir
+    for dep_path in "${!to_bundle[@]}"; do
+        local dep_base="${to_bundle[$dep_path]}"
+        if [[ ! -f "$dest_dir/$dep_base" ]]; then
+            cp -L "$dep_path" "$dest_dir/$dep_base"
+            echo "    Bundled: $dep_base"
+        fi
+    done
+
+    # Patch install names: set each bundled dylib's id to @rpath/name
+    for dep_path in "${!to_bundle[@]}"; do
+        local dep_base="${to_bundle[$dep_path]}"
+        install_name_tool -id "@rpath/$dep_base" "$dest_dir/$dep_base" 2>/dev/null || true
+    done
+
+    # Patch references in plugin and all bundled dylibs
+    for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
+        [[ -f "$lib" ]] || continue
+        for dep_path in "${!to_bundle[@]}"; do
+            local dep_base="${to_bundle[$dep_path]}"
+            install_name_tool -change "$dep_path" "@rpath/$dep_base" "$lib" 2>/dev/null || true
+        done
+    done
+
+    # Add @loader_path rpath to each bundled dylib and the plugin
+    for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
+        [[ -f "$lib" ]] || continue
+        # Only add if not already present
+        if ! otool -l "$lib" 2>/dev/null | grep -qF '@loader_path'; then
+            install_name_tool -add_rpath @loader_path "$lib" 2>/dev/null || true
+        fi
+    done
+
+    # Re-sign after patching (required on Apple Silicon)
+    for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
+        [[ -f "$lib" ]] || continue
+        codesign -s - -f "$lib" 2>/dev/null || true
+    done
+}
+
+_collect_deps_windows() {
+    local plugin_lib="$1"
+    local dest_dir="$2"
+
+    echo "  Collecting shared library dependencies (Windows/MSYS2)..."
+
+    # Get transitive deps via ldd, only bundle from /mingw64/bin
+    local deps
+    deps=$(ldd "$plugin_lib" 2>/dev/null \
+        | grep -oP '=> \K/mingw64/bin/\S+' \
+        || true)
+
+    if [[ -z "$deps" ]]; then
+        echo "  No MINGW64 dependencies to bundle."
+        return
+    fi
+
+    while IFS= read -r dep; do
+        local basename
+        basename=$(basename "$dep")
+        if [[ ! -f "$dest_dir/$basename" ]]; then
+            cp -L "$dep" "$dest_dir/$basename"
+            echo "    Bundled: $basename"
+        fi
+    done <<< "$deps"
+    # No patching needed — Windows searches DLL's directory automatically
+}
+
+collect_and_patch_deps() {
+    local plugin_lib="$1"
+    local dest_dir="$2"
+
+    case "$PLATFORM" in
+        linux-*)   _collect_deps_linux "$plugin_lib" "$dest_dir" ;;
+        darwin-*)  _collect_deps_darwin "$plugin_lib" "$dest_dir" ;;
+        windows-*) _collect_deps_windows "$plugin_lib" "$dest_dir" ;;
+    esac
+}
+
+# ---------------------------------------------------------------------------
+
 package_cli_plugin() {
     local name="$1"
     local dir="$SCRIPT_DIR/$name"
@@ -111,6 +287,9 @@ package_native_plugin() {
     cp "$dir/plugin.json" "$staging/$name/"
     cp "$dir/manifest.json" "$staging/$name/"
     cp "$lib_file" "$staging/$name/"
+
+    # Bundle shared library dependencies alongside the plugin
+    collect_and_patch_deps "$staging/$name/${lib_name}.${lib_ext}" "$staging/$name"
 
     tar czf "$tarball" -C "$staging" "$name/"
     rm -rf "$staging"

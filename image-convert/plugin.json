@@ -75,12 +75,6 @@
   ],
   "dependencies": [
     {
-      "name": "libvips",
-      "type": "system",
-      "check": "pkg-config --exists vips-cpp",
-      "install_hint": "brew install vips (macOS) or apt install libvips-dev (Linux)"
-    },
-    {
       "name": "imagemagick",
       "type": "system",
       "check": "command -v convert",

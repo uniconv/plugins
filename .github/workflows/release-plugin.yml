@@ -103,43 +103,23 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            cmake build-essential pkg-config meson ninja-build nasm yasm \
+            cmake build-essential pkg-config patchelf \
             libvips-dev \
-            libx264-dev libx265-dev libvpx-dev \
-            libopus-dev libmp3lame-dev \
-            libvorbis-dev libogg-dev
+            libavformat-dev libavcodec-dev libavutil-dev \
+            libswresample-dev libswscale-dev libavfilter-dev
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: brew install pkg-config vips ffmpeg meson ninja nasm
-
-      - name: Cache static FFmpeg deps
-        if: matrix.platform != 'windows-x86_64'
-        uses: actions/cache@v4
-        with:
-          path: third-party/${{ matrix.platform }}
-          key: ffmpeg-deps-${{ matrix.platform }}-v3
-
-      - name: Build static FFmpeg deps (macOS)
-        if: runner.os == 'macOS'
-        run: ./build-ffmpeg-deps.sh
-
-      - name: Build static FFmpeg deps (Linux)
-        if: runner.os == 'Linux'
-        shell: bash
-        run: ./build-ffmpeg-deps.sh --build-ffmpeg
+        run: brew install pkg-config vips ffmpeg
 
       - name: Build native plugin (Unix)
         if: matrix.platform != 'windows-x86_64'
         run: |
-          DEPS_PREFIX="${{ github.workspace }}/third-party/${{ matrix.platform }}"
           cd ${{ needs.detect.outputs.name }}
           mkdir -p build && cd build
           cmake \
             -DUNICONV_INCLUDE_DIR=${{ github.workspace }}/uniconv/include \
-            -DFFMPEG_STATIC=ON \
-            -DDEPS_PREFIX="$DEPS_PREFIX" \
             ..
           cmake --build .
 
@@ -150,7 +130,6 @@ jobs:
           mkdir -p build && cd build
           cmake -G "MinGW Makefiles" \
             -DUNICONV_INCLUDE_DIR="$(cygpath -u '${{ github.workspace }}')/uniconv/include" \
-            -DFFMPEG_STATIC=ON \
             ..
           cmake --build .
 

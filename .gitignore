@@ -4,6 +4,3 @@ __pycache__
 
 # Packaging output
 dist/
-
-# Pre-built static dependencies (from build-ffmpeg-deps.sh)
-third-party/
