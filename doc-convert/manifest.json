@@ -64,7 +64,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.17/doc-convert-1.0.17.tar.gz",
-          "sha256": ""
+          "sha256": "97f7fc678f78b4488744ba459b419714ec5bd86ec0bbc730e6ac0a5b0f3f0af2"
         }
       }
     },
