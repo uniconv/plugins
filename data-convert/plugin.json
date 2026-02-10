@@ -1,7 +1,7 @@
 {
   "name": "data-convert",
   "scope": "uniconv",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Convert between structured data formats (JSON, YAML, TOML, XML, CSV)",
   "author": "uniconv",
   "license": "MIT",

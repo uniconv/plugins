@@ -16,6 +16,37 @@
   ],
   "releases": [
     {
+      "version": "1.0.4",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "pyyaml",
+          "type": "python",
+          "description": "Required for YAML parsing and serialization",
+          "install_hint": "pip install pyyaml"
+        },
+        {
+          "name": "toml",
+          "type": "python",
+          "description": "Required for TOML parsing and serialization",
+          "install_hint": "pip install toml"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/data-convert-v1.0.4/data-convert-1.0.4.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.3",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
