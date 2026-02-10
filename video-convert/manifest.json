@@ -13,6 +13,61 @@
   ],
   "releases": [
     {
+      "version": "1.1.15",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        {
+          "name": "libavformat-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavformat",
+          "install_hint": "brew install ffmpeg (macOS) or apt install libavformat-dev (Linux)"
+        },
+        {
+          "name": "libavcodec-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavcodec",
+          "install_hint": "brew install ffmpeg (macOS) or apt install libavcodec-dev (Linux)"
+        },
+        {
+          "name": "libavutil-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavutil",
+          "install_hint": "brew install ffmpeg (macOS) or apt install libavutil-dev (Linux)"
+        },
+        {
+          "name": "libswscale-dev",
+          "type": "system",
+          "check": "pkg-config --exists libswscale",
+          "install_hint": "brew install ffmpeg (macOS) or apt install libswscale-dev (Linux)"
+        },
+        {
+          "name": "libavfilter-dev",
+          "type": "system",
+          "check": "pkg-config --exists libavfilter",
+          "install_hint": "brew install ffmpeg (macOS) or apt install libavfilter-dev (Linux)"
+        }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.15/video-convert-1.1.15-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.15/video-convert-1.1.15-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.15/video-convert-1.1.15-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.15/video-convert-1.1.15-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.1.14",
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
