@@ -15,6 +15,51 @@
   ],
   "releases": [
     {
+      "version": "1.0.19",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [
+        {
+          "name": "libvips",
+          "type": "system",
+          "check": "pkg-config --exists vips-cpp",
+          "install_hint": "brew install vips (macOS) or apt install libvips-dev (Linux)"
+        },
+        {
+          "name": "imagemagick",
+          "type": "system",
+          "check": "command -v convert",
+          "install_hint": "brew install imagemagick (macOS) or apt install imagemagick (Linux)",
+          "description": "Required for PDF and BMP format support"
+        },
+        {
+          "name": "imagemagick-pdf-delegate",
+          "type": "system",
+          "check": "convert -list delegate 2>/dev/null | grep -q pdf",
+          "install_hint": "Install ghostscript or poppler, then reinstall imagemagick",
+          "description": "PDF delegate required. If missing, install ghostscript/poppler then: brew reinstall imagemagick"
+        }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.19/image-convert-1.0.19-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.19/image-convert-1.0.19-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.19/image-convert-1.0.19-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.19/image-convert-1.0.19-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.18",
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
