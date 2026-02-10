@@ -15,6 +15,30 @@
   ],
   "releases": [
     {
+      "version": "1.0.29",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.29/image-convert-1.0.29-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.29/image-convert-1.0.29-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.29/image-convert-1.0.29-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.29/image-convert-1.0.29-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.28",
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
