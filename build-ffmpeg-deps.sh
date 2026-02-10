@@ -169,7 +169,7 @@ if [[ "$BUILD_FFMPEG" == "true" ]]; then
         make -j"$JOBS"
         make install
         echo "  Installed FFmpeg static libraries:"
-        ls -lh "$PREFIX/lib/libav*.a" "$PREFIX/lib/libsw*.a" 2>/dev/null | awk '{print "    " $NF " (" $5 ")"}'
+        ls -lh "$PREFIX/lib/libav"*.a "$PREFIX/lib/libsw"*.a 2>/dev/null | awk '{print "    " $NF " (" $5 ")"}' || true
     else
         echo "==> FFmpeg already built, skipping"
     fi
