@@ -51,7 +51,7 @@
         },
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.21/image-convert-1.0.21-darwin-aarch64.tar.gz",
-          "sha256": "df50ffdabbd489076022bbedac16e6623abeb79f04ad85550957e1a806974aa3"
+          "sha256": "da94254d92e4a12ed4f9250d198f8c23467e95fe9559dcf44aec6315f039fa34"
         },
         "windows-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/image-convert-v1.0.21/image-convert-1.0.21-windows-x86_64.tar.gz",
