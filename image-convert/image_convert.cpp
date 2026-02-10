@@ -20,11 +20,17 @@
 
 #include <vips/vips8>
 
+#include <cairo.h>
+#include <cairo-pdf.h>
+#include <poppler.h>
+
 #include <algorithm>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <sstream>
 #include <string>
+#include <vector>
 #include <sys/stat.h>
 
 // Plugin info
@@ -174,6 +180,244 @@ namespace
         }
     }
 
+    bool is_pdf_input(const std::string &path)
+    {
+        size_t dot = path.rfind('.');
+        if (dot == std::string::npos)
+            return false;
+        std::string ext = to_lower(path.substr(dot + 1));
+        return ext == "pdf";
+    }
+
+    vips::VImage load_pdf_as_vimage(const std::string &path)
+    {
+        // Build file:// URI from path
+        std::string uri = "file://" + path;
+
+        GError *error = nullptr;
+        PopplerDocument *doc = poppler_document_new_from_file(uri.c_str(), nullptr, &error);
+        if (!doc)
+        {
+            std::string msg = "Failed to open PDF: ";
+            if (error)
+            {
+                msg += error->message;
+                g_error_free(error);
+            }
+            throw std::runtime_error(msg);
+        }
+
+        if (poppler_document_get_n_pages(doc) == 0)
+        {
+            g_object_unref(doc);
+            throw std::runtime_error("PDF has no pages");
+        }
+
+        PopplerPage *page = poppler_document_get_page(doc, 0);
+        if (!page)
+        {
+            g_object_unref(doc);
+            throw std::runtime_error("Failed to get first page of PDF");
+        }
+
+        double page_w, page_h;
+        poppler_page_get_size(page, &page_w, &page_h);
+
+        // Render at 300 DPI (PDF points are 72 DPI)
+        constexpr double kDPI = 300.0;
+        constexpr double kScale = kDPI / 72.0;
+        int pixel_w = static_cast<int>(page_w * kScale);
+        int pixel_h = static_cast<int>(page_h * kScale);
+
+        cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, pixel_w, pixel_h);
+        cairo_t *cr = cairo_create(surface);
+
+        // White background
+        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+        cairo_paint(cr);
+
+        // Scale and render
+        cairo_scale(cr, kScale, kScale);
+        poppler_page_render(page, cr);
+        cairo_destroy(cr);
+
+        g_object_unref(page);
+        g_object_unref(doc);
+
+        cairo_surface_flush(surface);
+        unsigned char *cairo_data = cairo_image_surface_get_data(surface);
+        int stride = cairo_image_surface_get_stride(surface);
+
+        // Convert BGRA (cairo) -> RGBA
+        std::vector<unsigned char> rgba(static_cast<size_t>(pixel_w) * pixel_h * 4);
+        for (int y = 0; y < pixel_h; y++)
+        {
+            const unsigned char *src_row = cairo_data + y * stride;
+            unsigned char *dst_row = rgba.data() + y * pixel_w * 4;
+            for (int x = 0; x < pixel_w; x++)
+            {
+                // Cairo ARGB32 is stored as native-endian uint32: on little-endian = BGRA bytes
+                unsigned char b = src_row[x * 4 + 0];
+                unsigned char g = src_row[x * 4 + 1];
+                unsigned char r = src_row[x * 4 + 2];
+                unsigned char a = src_row[x * 4 + 3];
+                // Un-premultiply alpha
+                if (a > 0 && a < 255)
+                {
+                    r = static_cast<unsigned char>(std::min(255, r * 255 / a));
+                    g = static_cast<unsigned char>(std::min(255, g * 255 / a));
+                    b = static_cast<unsigned char>(std::min(255, b * 255 / a));
+                }
+                dst_row[x * 4 + 0] = r;
+                dst_row[x * 4 + 1] = g;
+                dst_row[x * 4 + 2] = b;
+                dst_row[x * 4 + 3] = a;
+            }
+        }
+
+        cairo_surface_destroy(surface);
+
+        vips::VImage image = vips::VImage::new_from_memory(
+            rgba.data(), rgba.size(), pixel_w, pixel_h, 4, VIPS_FORMAT_UCHAR);
+        // copy_memory() so vips owns the pixel data (rgba vector will be freed)
+        return image.copy_memory();
+    }
+
+    void save_vimage_as_pdf(vips::VImage image, const std::string &output_path)
+    {
+        // Flatten alpha if present
+        if (image.bands() == 4)
+        {
+            image = image.flatten();
+        }
+
+        int w = image.width();
+        int h = image.height();
+        int bands = image.bands(); // should be 3 (RGB) after flatten
+
+        // Create PDF surface (1 pixel = 1 point = 1/72 inch)
+        cairo_surface_t *pdf_surface = cairo_pdf_surface_create(output_path.c_str(), w, h);
+        if (cairo_surface_status(pdf_surface) != CAIRO_STATUS_SUCCESS)
+        {
+            cairo_surface_destroy(pdf_surface);
+            throw std::runtime_error("Failed to create PDF surface: " +
+                                     std::string(cairo_status_to_string(cairo_surface_status(pdf_surface))));
+        }
+
+        cairo_t *cr = cairo_create(pdf_surface);
+
+        // Create an image surface from vips data
+        // Cairo expects BGRA (ARGB32 in native endian on little-endian)
+        cairo_surface_t *img_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h);
+        unsigned char *cairo_data = cairo_image_surface_get_data(img_surface);
+        int stride = cairo_image_surface_get_stride(img_surface);
+
+        // Access vips pixel data
+        const unsigned char *vips_data = static_cast<const unsigned char *>(image.data());
+        int vips_stride = w * bands;
+
+        for (int y = 0; y < h; y++)
+        {
+            const unsigned char *src_row = vips_data + y * vips_stride;
+            unsigned char *dst_row = cairo_data + y * stride;
+            for (int x = 0; x < w; x++)
+            {
+                unsigned char r = src_row[x * bands + 0];
+                unsigned char g = src_row[x * bands + 1];
+                unsigned char b = src_row[x * bands + 2];
+                // Cairo ARGB32 on little-endian: BGRA byte order
+                dst_row[x * 4 + 0] = b;
+                dst_row[x * 4 + 1] = g;
+                dst_row[x * 4 + 2] = r;
+                dst_row[x * 4 + 3] = 255; // fully opaque
+            }
+        }
+
+        cairo_surface_mark_dirty(img_surface);
+
+        cairo_set_source_surface(cr, img_surface, 0, 0);
+        cairo_paint(cr);
+
+        cairo_destroy(cr);
+        cairo_surface_destroy(img_surface);
+        cairo_surface_finish(pdf_surface);
+
+        cairo_status_t status = cairo_surface_status(pdf_surface);
+        cairo_surface_destroy(pdf_surface);
+
+        if (status != CAIRO_STATUS_SUCCESS)
+        {
+            throw std::runtime_error("Failed to write PDF: " +
+                                     std::string(cairo_status_to_string(status)));
+        }
+    }
+
+    void save_vimage_as_bmp(vips::VImage image, const std::string &output_path)
+    {
+        // Flatten alpha onto white background if present
+        if (image.bands() == 4)
+        {
+            image = image.flatten();
+        }
+
+        int w = image.width();
+        int h = image.height();
+        int bands = image.bands(); // should be 3
+        const unsigned char *data = static_cast<const unsigned char *>(image.data());
+
+        // BMP row size: 3 bytes/pixel, padded to 4-byte boundary
+        int row_size = (w * 3 + 3) & ~3;
+        int pixel_data_size = row_size * h;
+        int file_size = 14 + 40 + pixel_data_size; // header + DIB header + pixels
+
+        FILE *fp = fopen(output_path.c_str(), "wb");
+        if (!fp)
+        {
+            throw std::runtime_error("Failed to open output file: " + output_path);
+        }
+
+        auto write_u16 = [&](uint16_t v)
+        { fwrite(&v, 2, 1, fp); };
+        auto write_u32 = [&](uint32_t v)
+        { fwrite(&v, 4, 1, fp); };
+
+        // BMP file header (14 bytes)
+        fwrite("BM", 1, 2, fp);
+        write_u32(static_cast<uint32_t>(file_size));
+        write_u16(0); // reserved1
+        write_u16(0); // reserved2
+        write_u32(14 + 40); // pixel data offset
+
+        // BITMAPINFOHEADER (40 bytes)
+        write_u32(40); // header size
+        write_u32(static_cast<uint32_t>(w));
+        write_u32(static_cast<uint32_t>(h));
+        write_u16(1);  // planes
+        write_u16(24); // bits per pixel
+        write_u32(0);  // compression (none)
+        write_u32(static_cast<uint32_t>(pixel_data_size));
+        write_u32(2835); // X pixels/meter (~72 DPI)
+        write_u32(2835); // Y pixels/meter
+        write_u32(0);    // colors used
+        write_u32(0);    // important colors
+
+        // Pixel data: bottom-to-top, RGB -> BGR
+        std::vector<unsigned char> row_buf(static_cast<size_t>(row_size), 0);
+        for (int y = h - 1; y >= 0; y--)
+        {
+            const unsigned char *src_row = data + y * w * bands;
+            for (int x = 0; x < w; x++)
+            {
+                row_buf[x * 3 + 0] = src_row[x * bands + 2]; // B
+                row_buf[x * 3 + 1] = src_row[x * bands + 1]; // G
+                row_buf[x * 3 + 2] = src_row[x * bands + 0]; // R
+            }
+            fwrite(row_buf.data(), 1, static_cast<size_t>(row_size), fp);
+        }
+
+        fclose(fp);
+    }
+
 } // anonymous namespace
 
 extern "C"
@@ -262,7 +506,11 @@ extern "C"
         try
         {
             // Load image
-            vips::VImage image = vips::VImage::new_from_file(source_path.c_str());
+            vips::VImage image;
+            if (is_pdf_input(source_path))
+                image = load_pdf_as_vimage(source_path);
+            else
+                image = vips::VImage::new_from_file(source_path.c_str());
 
             size_t input_size = get_file_size(source_path);
 
@@ -336,13 +584,11 @@ extern "C"
             }
             else if (target == "bmp")
             {
-                image.magicksave(output_path.c_str(),
-                                 vips::VImage::option()->set("format", "BMP"));
+                save_vimage_as_bmp(image, output_path);
             }
             else if (target == "pdf")
             {
-                image.magicksave(output_path.c_str(),
-                                 vips::VImage::option()->set("format", "PDF"));
+                save_vimage_as_pdf(image, output_path);
             }
             else
             {

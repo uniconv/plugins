@@ -105,6 +105,8 @@ jobs:
             mingw-w64-x86_64-pkg-config
             mingw-w64-x86_64-ffmpeg
             mingw-w64-x86_64-libvips
+            mingw-w64-x86_64-cairo
+            mingw-w64-x86_64-poppler
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -114,13 +116,14 @@ jobs:
           sudo apt-get install -y \
             cmake build-essential pkg-config patchelf \
             libvips-dev \
+            libcairo2-dev libpoppler-glib-dev \
             libavformat-dev libavcodec-dev libavutil-dev \
             libswresample-dev libswscale-dev libavfilter-dev
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
         shell: bash
-        run: brew install pkg-config vips ffmpeg
+        run: brew install pkg-config vips cairo poppler ffmpeg
 
       - name: Build native plugin (Unix)
         if: matrix.platform != 'windows-x86_64'

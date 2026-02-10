@@ -8,9 +8,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(UNICONV_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../uniconv/include"
     CACHE PATH "Path to uniconv include directory")
 
-# Find libvips via pkg-config
+# Find dependencies via pkg-config
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(VIPS REQUIRED vips-cpp)
+pkg_check_modules(CAIRO REQUIRED cairo)
+pkg_check_modules(POPPLER_GLIB REQUIRED poppler-glib)
 
 # Build shared library
 add_library(image_convert SHARED image_convert.cpp)
@@ -18,13 +20,19 @@ add_library(image_convert SHARED image_convert.cpp)
 target_include_directories(image_convert PRIVATE
     ${UNICONV_INCLUDE_DIR}
     ${VIPS_INCLUDE_DIRS}
+    ${CAIRO_INCLUDE_DIRS}
+    ${POPPLER_GLIB_INCLUDE_DIRS}
 )
 
 target_link_directories(image_convert PRIVATE
     ${VIPS_LIBRARY_DIRS}
+    ${CAIRO_LIBRARY_DIRS}
+    ${POPPLER_GLIB_LIBRARY_DIRS}
 )
 target_link_libraries(image_convert PRIVATE
     ${VIPS_LIBRARIES}
+    ${CAIRO_LIBRARIES}
+    ${POPPLER_GLIB_LIBRARIES}
 )
 
 # RPATH: find bundled shared libs next to the plugin
