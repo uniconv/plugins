@@ -17,6 +17,58 @@
   ],
   "releases": [
     {
+      "version": "1.0.13",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "libreoffice",
+          "type": "system",
+          "check": "command -v libreoffice || command -v soffice",
+          "install_hint": "brew install libreoffice (macOS) or apt install libreoffice (Linux)"
+        },
+        {
+          "name": "pandoc",
+          "type": "system",
+          "check": "command -v pandoc",
+          "optional": true,
+          "description": "Required for Markdown conversion",
+          "install_hint": "brew install pandoc (macOS) or apt install pandoc (Linux)"
+        },
+        {
+          "name": "pdf2docx",
+          "type": "python",
+          "version": ">=0.5.0",
+          "description": "Required for PDF to DOCX conversion"
+        },
+        {
+          "name": "pyhwp",
+          "type": "python",
+          "optional": true,
+          "description": "Required for HWP conversion on systems where LibreOffice lacks the HWP filter",
+          "install_hint": "pip install pyhwp six"
+        },
+        {
+          "name": "six",
+          "type": "python",
+          "optional": true,
+          "description": "Required by pyhwp (missing transitive dependency)"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.13/doc-convert-1.0.13.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.12",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
