@@ -57,7 +57,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/ascii-v1.0.15/ascii-1.0.15.tar.gz",
-          "sha256": ""
+          "sha256": "d6a4bcb2b346b091f695b8f1e5355710c4423864bc4e76c6cd852d1374d87a93"
         }
       }
     },
