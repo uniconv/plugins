@@ -126,12 +126,38 @@ $current_real"
             | awk '{print $1}' \
             || true)
 
+        # Directory of the current library — used to resolve @rpath refs
+        local current_dir
+        current_dir=$(dirname "$current_real")
+
         while IFS= read -r dep; do
             [[ -z "$dep" ]] && continue
-            # Skip system libs, self-references, and already-patched refs
+            # Skip system libs and self-references
             case "$dep" in
-                /usr/lib/*|/System/*|@rpath/*|@loader_path/*|@executable_path/*) continue ;;
+                /usr/lib/*|/System/*|@loader_path/*|@executable_path/*) continue ;;
             esac
+
+            # Resolve @rpath/ references by looking in the library's own directory
+            # and in common homebrew/system locations
+            if [[ "$dep" == @rpath/* ]]; then
+                local rpath_name="${dep#@rpath/}"
+                local resolved=""
+                for search_dir in "$current_dir" /opt/homebrew/lib /usr/local/lib; do
+                    if [[ -f "$search_dir/$rpath_name" ]]; then
+                        resolved="$search_dir/$rpath_name"
+                        break
+                    fi
+                done
+                # Also search homebrew opt dirs for the library
+                if [[ -z "$resolved" ]]; then
+                    resolved=$(find /opt/homebrew/opt -name "$rpath_name" -type f 2>/dev/null | head -1)
+                fi
+                if [[ -z "$resolved" ]]; then
+                    echo "    WARNING: Could not resolve $dep" >&2
+                    continue
+                fi
+                dep="$resolved"
+            fi
 
             if [[ -f "$dep" ]]; then
                 # Add to bundle list if not already there
