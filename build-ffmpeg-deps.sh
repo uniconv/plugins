@@ -19,7 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Pinned versions
 DAV1D_VERSION="1.5.1"
-SVT_AV1_VERSION="4.0.1"
+SVT_AV1_VERSION="2.3.0"
 FFMPEG_VERSION="7.1"
 
 detect_platform() {

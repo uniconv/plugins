@@ -119,7 +119,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: third-party/${{ matrix.platform }}
-          key: ffmpeg-deps-${{ matrix.platform }}-v2
+          key: ffmpeg-deps-${{ matrix.platform }}-v3
 
       - name: Build static FFmpeg deps (macOS)
         if: runner.os == 'macOS'
