@@ -1,7 +1,7 @@
 {
   "name": "qr-code",
   "scope": "uniconv",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Generate and decode QR codes",
   "author": "uniconv",
   "license": "MIT",
@@ -16,6 +16,9 @@
   ],
   "interface": "cli",
   "executable": "qr-code.py",
+  "bundled_libs": [
+    {"pkg_config": "zbar", "lib_name": "zbar"}
+  ],
   "targets": [
     "qr",
     "qr-decode"
@@ -83,13 +86,6 @@
       "type": "python",
       "description": "Required for QR code generation",
       "install_hint": "pip install segno"
-    },
-    {
-      "name": "zbar",
-      "type": "system",
-      "check": "which zbarimg",
-      "description": "Required by pyzbar for QR code decoding",
-      "install_hint": "brew install zbar (macOS) or apt install libzbar0 (Linux)"
     },
     {
       "name": "Pillow",

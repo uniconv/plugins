@@ -18,9 +18,34 @@ Plugin options (generation only):
 """
 
 import argparse
+import ctypes
+import ctypes.util
 import json
 import os
 import sys
+
+# Pre-load bundled libzbar (if present) before importing pyzbar.
+# pyzbar uses ctypes.util.find_library('zbar') which won't find a bundled lib,
+# so we load it explicitly and monkey-patch find_library.
+_plugin_dir = os.path.dirname(os.path.abspath(__file__))
+_lib_dir = os.path.join(_plugin_dir, 'lib')
+
+if os.path.isdir(_lib_dir):
+    if sys.platform == 'darwin':
+        _zbar_name = 'libzbar.0.dylib'
+    elif sys.platform == 'win32':
+        _zbar_name = 'libzbar-0.dll'
+    else:
+        _zbar_name = 'libzbar.so.0'
+    _zbar_path = os.path.join(_lib_dir, _zbar_name)
+    if os.path.exists(_zbar_path):
+        ctypes.CDLL(_zbar_path)
+        _orig_find_library = ctypes.util.find_library
+        def _patched_find_library(name):
+            if name == 'zbar':
+                return _zbar_path
+            return _orig_find_library(name)
+        ctypes.util.find_library = _patched_find_library
 
 try:
     import segno

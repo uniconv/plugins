@@ -15,6 +15,7 @@ jobs:
       name: ${{ steps.parse.outputs.name }}
       version: ${{ steps.parse.outputs.version }}
       interface: ${{ steps.detect.outputs.interface }}
+      has_native_libs: ${{ steps.native_libs.outputs.has_native_libs }}
     steps:
       - uses: actions/checkout@v4
 
@@ -41,9 +42,17 @@ jobs:
           echo "interface=$INTERFACE" >> "$GITHUB_OUTPUT"
           echo "Detected interface: $INTERFACE"
 
+      - name: Detect bundled native libs
+        id: native_libs
+        run: |
+          PLUGIN_JSON="${{ steps.parse.outputs.name }}/plugin.json"
+          HAS_NATIVE=$(python3 -c "import json; d=json.load(open('$PLUGIN_JSON')); print('true' if d.get('bundled_libs') else 'false')")
+          echo "has_native_libs=$HAS_NATIVE" >> "$GITHUB_OUTPUT"
+          echo "Has native libs: $HAS_NATIVE"
+
   build-cli:
     needs: detect
-    if: needs.detect.outputs.interface == 'cli'
+    if: needs.detect.outputs.interface == 'cli' && needs.detect.outputs.has_native_libs != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -142,9 +151,59 @@ jobs:
           name: plugin-${{ matrix.platform }}
           path: dist/*.tar.gz
 
+  build-cli-native:
+    needs: detect
+    if: needs.detect.outputs.interface == 'cli' && needs.detect.outputs.has_native_libs == 'true'
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux-x86_64
+          - runner: ubuntu-24.04-arm
+            platform: linux-aarch64
+          - runner: macos-latest
+            platform: darwin-aarch64
+          - runner: windows-latest
+            platform: windows-x86_64
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: ${{ matrix.platform == 'windows-x86_64' && 'msys2 {0}' || 'bash' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSYS2 (Windows)
+        if: matrix.platform == 'windows-x86_64'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-zbar
+            mingw-w64-x86_64-pkg-config
+
+      - name: Install native deps (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y pkg-config patchelf libzbar-dev
+
+      - name: Install native deps (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: brew install pkg-config zbar
+
+      - name: Package
+        run: PLATFORM=${{ matrix.platform }} ./package.sh ${{ needs.detect.outputs.name }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-${{ matrix.platform }}
+          path: dist/*.tar.gz
+
   release:
-    needs: [detect, build-cli, build-native]
-    if: always() && (needs.build-cli.result == 'success' || needs.build-native.result == 'success')
+    needs: [detect, build-cli, build-native, build-cli-native]
+    if: always() && (needs.build-cli.result == 'success' || needs.build-native.result == 'success' || needs.build-cli-native.result == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts

@@ -283,6 +283,26 @@ collect_and_patch_deps() {
 
 # ---------------------------------------------------------------------------
 
+_find_pkg_lib() {
+    local pkg_config_name="$1"
+    local lib_name="$2"
+    local lib_dir lib_ext
+
+    lib_dir=$(pkg-config --variable=libdir "$pkg_config_name" 2>/dev/null || true)
+    [[ -z "$lib_dir" ]] && return 1
+
+    case "$PLATFORM" in
+        darwin-*)  lib_ext="dylib" ;;
+        linux-*)   lib_ext="so" ;;
+        windows-*) lib_ext="dll" ;;
+    esac
+
+    # Find the versioned shared library (not symlink)
+    local found
+    found=$(find "$lib_dir" -maxdepth 1 -name "lib${lib_name}*.${lib_ext}*" -not -type l 2>/dev/null | head -1)
+    [[ -n "$found" ]] && echo "$found"
+}
+
 package_cli_plugin() {
     local name="$1"
     local dir="$SCRIPT_DIR/$name"
@@ -290,21 +310,85 @@ package_cli_plugin() {
 
     pypath=$(python_path "$dir/plugin.json")
     version=$(python3 -c "import json; print(json.load(open('$pypath'))['version'])")
-    local tarball="$DIST_DIR/${name}-${version}.tar.gz"
 
-    echo "Packaging $name v$version (cli, any) ..."
+    # Check if this CLI plugin has bundled native libs
+    local bundled_libs
+    bundled_libs=$(python3 -c "
+import json, sys
+d = json.load(open('$pypath'))
+libs = d.get('bundled_libs', [])
+for lib in libs:
+    print(lib['pkg_config'] + ':' + lib['lib_name'])
+" 2>/dev/null || true)
 
-    tar czf "$tarball" \
-        --exclude='__pycache__' \
-        --exclude='*.pyc' \
-        -C "$SCRIPT_DIR" "$name/"
+    if [[ -n "$bundled_libs" ]]; then
+        # Platform-specific packaging with bundled native libs
+        local tarball="$DIST_DIR/${name}-${version}-${PLATFORM}.tar.gz"
 
-    local sha256
-    sha256=$(compute_sha256 "$tarball")
+        echo "Packaging $name v$version (cli+native, $PLATFORM) ..."
 
-    echo "  -> $(basename "$tarball")"
-    echo "  -> sha256: $sha256"
-    echo "$sha256" > "$tarball.sha256"
+        local staging
+        staging=$(mktemp -d)
+        mkdir -p "$staging/$name/lib"
+
+        # Copy plugin files
+        for f in "$dir"/*.py "$dir"/plugin.json "$dir"/manifest.json; do
+            [[ -f "$f" ]] && cp "$f" "$staging/$name/"
+        done
+
+        # Bundle each native lib
+        while IFS= read -r entry; do
+            [[ -z "$entry" ]] && continue
+            local pkg_config_name="${entry%%:*}"
+            local lib_name="${entry##*:}"
+
+            local lib_path
+            lib_path=$(_find_pkg_lib "$pkg_config_name" "$lib_name")
+            if [[ -z "$lib_path" ]]; then
+                echo "  ERROR: Could not find lib for pkg-config=$pkg_config_name lib=$lib_name" >&2
+                rm -rf "$staging"
+                return 1
+            fi
+
+            local lib_base
+            lib_base=$(basename "$lib_path")
+            cp -L "$lib_path" "$staging/$name/lib/$lib_base"
+            echo "  Bundled: $lib_base"
+
+            # Collect transitive deps and patch load paths
+            collect_and_patch_deps "$staging/$name/lib/$lib_base" "$staging/$name/lib"
+        done <<< "$bundled_libs"
+
+        tar czf "$tarball" \
+            --exclude='__pycache__' \
+            --exclude='*.pyc' \
+            -C "$staging" "$name/"
+        rm -rf "$staging"
+
+        local sha256
+        sha256=$(compute_sha256 "$tarball")
+
+        echo "  -> $(basename "$tarball")"
+        echo "  -> sha256: $sha256"
+        echo "$sha256" > "$tarball.sha256"
+    else
+        # Platform-independent packaging (no native libs)
+        local tarball="$DIST_DIR/${name}-${version}.tar.gz"
+
+        echo "Packaging $name v$version (cli, any) ..."
+
+        tar czf "$tarball" \
+            --exclude='__pycache__' \
+            --exclude='*.pyc' \
+            -C "$SCRIPT_DIR" "$name/"
+
+        local sha256
+        sha256=$(compute_sha256 "$tarball")
+
+        echo "  -> $(basename "$tarball")"
+        echo "  -> sha256: $sha256"
+        echo "$sha256" > "$tarball.sha256"
+    fi
 }
 
 package_native_plugin() {
