@@ -100,18 +100,24 @@ _collect_deps_darwin() {
     echo "  Collecting shared library dependencies (macOS)..."
 
     # BFS to collect transitive dylib dependencies
-    local -a queue=("$plugin_lib")
-    local -A visited=()
-    local -A to_bundle=()  # original_path -> basename
+    # Avoid bash 4+ features (associative arrays) for macOS /bin/bash compatibility
+    local queue="$plugin_lib"
+    local visited=""
+    local bundle_paths=""  # newline-separated list of absolute paths to bundle
 
-    while [[ ${#queue[@]} -gt 0 ]]; do
-        local current="${queue[0]}"
-        queue=("${queue[@]:1}")
+    while [[ -n "$queue" ]]; do
+        local current
+        current=$(echo "$queue" | head -n 1)
+        queue=$(echo "$queue" | tail -n +2)
 
         local current_real
         current_real=$(realpath "$current" 2>/dev/null || echo "$current")
-        [[ -n "${visited[$current_real]+x}" ]] && continue
-        visited[$current_real]=1
+        # Check if already visited
+        case "$visited" in
+            *"$current_real"*) continue ;;
+        esac
+        visited="$visited
+$current_real"
 
         # Get dependencies
         local deps
@@ -123,52 +129,61 @@ _collect_deps_darwin() {
         while IFS= read -r dep; do
             [[ -z "$dep" ]] && continue
             # Skip system libs, self-references, and already-patched refs
-            [[ "$dep" == /usr/lib/* ]] && continue
-            [[ "$dep" == /System/* ]] && continue
-            [[ "$dep" == @rpath/* ]] && continue
-            [[ "$dep" == @loader_path/* ]] && continue
-            [[ "$dep" == @executable_path/* ]] && continue
+            case "$dep" in
+                /usr/lib/*|/System/*|@rpath/*|@loader_path/*|@executable_path/*) continue ;;
+            esac
 
             if [[ -f "$dep" ]]; then
-                local dep_base
-                dep_base=$(basename "$dep")
-                to_bundle[$dep]="$dep_base"
+                # Add to bundle list if not already there
+                case "$bundle_paths" in
+                    *"$dep"*) ;;
+                    *) bundle_paths="$bundle_paths
+$dep" ;;
+                esac
                 local dep_real
                 dep_real=$(realpath "$dep" 2>/dev/null || echo "$dep")
-                if [[ -z "${visited[$dep_real]+x}" ]]; then
-                    queue+=("$dep")
-                fi
+                case "$visited" in
+                    *"$dep_real"*) ;;
+                    *) queue="$queue
+$dep" ;;
+                esac
             fi
         done <<< "$deps"
     done
 
-    if [[ ${#to_bundle[@]} -eq 0 ]]; then
+    # Trim leading blank lines
+    bundle_paths=$(echo "$bundle_paths" | sed '/^$/d')
+
+    if [[ -z "$bundle_paths" ]]; then
         echo "  No non-system dependencies to bundle."
         return
     fi
 
     # Copy deps to staging dir
-    for dep_path in "${!to_bundle[@]}"; do
-        local dep_base="${to_bundle[$dep_path]}"
+    while IFS= read -r dep_path; do
+        local dep_base
+        dep_base=$(basename "$dep_path")
         if [[ ! -f "$dest_dir/$dep_base" ]]; then
             cp -L "$dep_path" "$dest_dir/$dep_base"
             echo "    Bundled: $dep_base"
         fi
-    done
+    done <<< "$bundle_paths"
 
     # Patch install names: set each bundled dylib's id to @rpath/name
-    for dep_path in "${!to_bundle[@]}"; do
-        local dep_base="${to_bundle[$dep_path]}"
+    while IFS= read -r dep_path; do
+        local dep_base
+        dep_base=$(basename "$dep_path")
         install_name_tool -id "@rpath/$dep_base" "$dest_dir/$dep_base" 2>/dev/null || true
-    done
+    done <<< "$bundle_paths"
 
     # Patch references in plugin and all bundled dylibs
     for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
         [[ -f "$lib" ]] || continue
-        for dep_path in "${!to_bundle[@]}"; do
-            local dep_base="${to_bundle[$dep_path]}"
+        while IFS= read -r dep_path; do
+            local dep_base
+            dep_base=$(basename "$dep_path")
             install_name_tool -change "$dep_path" "@rpath/$dep_base" "$lib" 2>/dev/null || true
-        done
+        done <<< "$bundle_paths"
     done
 
     # Add @loader_path rpath to each bundled dylib and the plugin
