@@ -26,14 +26,17 @@ if(VIPS_STATIC)
     message(STATUS "libvips: static linking enabled")
 
     # Get complete static link flags directly from pkg-config
+    # Explicitly include gobject-2.0 and glib-2.0 since some platforms (MSYS2)
+    # don't list them in vips-cpp's Requires.private
+    set(VIPS_MODULES vips-cpp gobject-2.0 glib-2.0)
     execute_process(
-        COMMAND pkg-config --static --libs vips-cpp
+        COMMAND pkg-config --static --libs ${VIPS_MODULES}
         OUTPUT_VARIABLE _RAW_STATIC_LDFLAGS
         OUTPUT_STRIP_TRAILING_WHITESPACE
         RESULT_VARIABLE _PKG_RESULT
     )
     if(NOT _PKG_RESULT EQUAL 0)
-        message(FATAL_ERROR "pkg-config --static --libs failed for vips-cpp")
+        message(FATAL_ERROR "pkg-config --static --libs failed for ${VIPS_MODULES}")
     endif()
 
     # Parse raw flags into categorized lists
