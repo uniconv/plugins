@@ -10,6 +10,12 @@ set(UNICONV_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../uniconv/include"
 
 option(VIPS_STATIC "Link libvips statically for standalone distribution" ON)
 
+# Windows/MSYS2: .a files are DLL import libs, not true static archives;
+# headers use __declspec(dllimport), so static linking requires recompilation.
+if(WIN32)
+    set(VIPS_STATIC OFF CACHE BOOL "" FORCE)
+endif()
+
 # Find libvips via pkg-config
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(VIPS REQUIRED vips-cpp)
