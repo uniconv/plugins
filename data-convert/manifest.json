@@ -42,7 +42,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/data-convert-v1.0.4/data-convert-1.0.4.tar.gz",
-          "sha256": ""
+          "sha256": "76a8309078a1e4bb68257cfed0562dd591f7fdfe04a4189762376d4a2175a27a"
         }
       }
     },
