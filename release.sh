@@ -198,8 +198,9 @@ with open(manifest_path, 'w') as f:
 
     echo "--- Step 5: Push ---"
     if $DRY_RUN; then
-        echo "  [dry-run] Would push commit and tag to origin"
+        echo "  [dry-run] Would pull --rebase and push commit and tag to origin"
     elif $PUSH; then
+        git -C "$SCRIPT_DIR" pull --rebase origin main
         git -C "$SCRIPT_DIR" push origin HEAD "$TAG"
         echo "  Pushed commit and tag."
     else

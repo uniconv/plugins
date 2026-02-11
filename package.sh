@@ -235,6 +235,31 @@ $dep" ;;
         done <<< "$rpaths"
     done
 
+    # Neutralize compiled-in Homebrew paths in bundled dylibs.
+    # Libraries like libvips and libgio embed absolute paths (e.g.
+    # /opt/homebrew/Cellar/vips/.../lib) for runtime module discovery.
+    # On the host these resolve to Homebrew-installed modules which link
+    # against the *system* glib, causing duplicate-library ObjC class
+    # conflicts.  Binary-patch the prefix to a same-length non-existent
+    # path so those look-ups safely fail at runtime.
+    local brew_prefix
+    brew_prefix=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
+    for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
+        [[ -f "$lib" ]] || continue
+        if LC_ALL=C grep -qc "$brew_prefix" "$lib" 2>/dev/null; then
+            python3 -c "
+import sys, pathlib
+p = pathlib.Path(sys.argv[1])
+prefix = sys.argv[2].encode()
+dead = b'/not' + b'_' * (len(prefix) - 4)   # same length, non-existent
+data = p.read_bytes()
+data = data.replace(prefix, dead)
+p.write_bytes(data)
+" "$lib" "$brew_prefix"
+            echo "    Patched compiled-in paths: $(basename "$lib")"
+        fi
+    done
+
     # Re-sign after patching (required on Apple Silicon)
     for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
         [[ -f "$lib" ]] || continue
