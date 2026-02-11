@@ -137,20 +137,23 @@ for field in ['name', 'description', 'author', 'license', 'repository', 'keyword
 tag = f'{name}-v{version}'
 base_url = f'https://github.com/{repo}/releases/download/{tag}'
 
-if interface == 'cli':
-    artifact = {
-        'any': {
-            'url': f'{base_url}/{name}-{version}.tar.gz',
-            'sha256': ''
-        }
-    }
-else:
+has_bundled_libs = bool(plugin.get('bundled_libs'))
+platform_specific = (interface == 'native') or has_bundled_libs
+
+if platform_specific:
     artifact = {}
     for p in ['linux-x86_64', 'linux-aarch64', 'darwin-aarch64', 'windows-x86_64']:
         artifact[p] = {
             'url': f'{base_url}/{name}-{version}-{p}.tar.gz',
             'sha256': ''
         }
+else:
+    artifact = {
+        'any': {
+            'url': f'{base_url}/{name}-{version}.tar.gz',
+            'sha256': ''
+        }
+    }
 
 new_release = {
     'version': version,
