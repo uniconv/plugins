@@ -468,10 +468,29 @@ def handle_compress(args, target, resolved_target):
         }))
         return 1
 
+    # Transcode: if input is an archive, extract first then recompress
+    compress_input = args.input
+    temp_extract_dir = None
+
+    if not os.path.isdir(args.input):
+        input_format = detect_archive_format(args.input)
+        if input_format is not None:
+            temp_extract_dir = tempfile.mkdtemp(prefix="uniconv_transcode_")
+            try:
+                do_decompress(args.input, temp_extract_dir)
+                compress_input = temp_extract_dir
+            except Exception as e:
+                shutil.rmtree(temp_extract_dir, ignore_errors=True)
+                print(json.dumps({
+                    "success": False,
+                    "error": f"Failed to extract input archive for transcoding: {e}",
+                }))
+                return 1
+
     # Compress
     try:
         do_compress(
-            args.input,
+            compress_input,
             target,
             output_path,
             compression_level=args.compression_level,
@@ -480,11 +499,16 @@ def handle_compress(args, target, resolved_target):
         # Clean up partial output
         if os.path.exists(output_path):
             os.remove(output_path)
+        if temp_extract_dir:
+            shutil.rmtree(temp_extract_dir, ignore_errors=True)
         print(json.dumps({
             "success": False,
             "error": f"Failed to create archive: {e}",
         }))
         return 1
+
+    if temp_extract_dir:
+        shutil.rmtree(temp_extract_dir, ignore_errors=True)
 
     output_size = os.path.getsize(output_path)
     input_size = (
