@@ -444,8 +444,6 @@ def handle_compress(args, target, resolved_target):
 
     if args.output:
         output_path = args.output
-        if not output_path.lower().endswith(ext):
-            output_path = output_path + ext
     else:
         if os.path.isdir(args.input):
             base = args.input.rstrip("/")
