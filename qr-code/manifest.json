@@ -44,9 +44,21 @@
         }
       ],
       "artifact": {
-        "any": {
-          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.9/qr-code-1.0.9.tar.gz",
-          "sha256": ""
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.9/qr-code-1.0.9-linux-x86_64.tar.gz",
+          "sha256": "adf753cae187623a5b048f0f11c339f54957c1d0914b35871b94c7d6f21b4b54"
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.9/qr-code-1.0.9-linux-aarch64.tar.gz",
+          "sha256": "75bd84c8dbb2f3d95a59d7c4f42424ffc363a75f004717459f9803f258a06d1f"
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.9/qr-code-1.0.9-darwin-aarch64.tar.gz",
+          "sha256": "797764b44dc72219113fbe7fe7964b652c774ab47907704e26f3e006daf757dc"
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.9/qr-code-1.0.9-windows-x86_64.tar.gz",
+          "sha256": "bdaee7a4f1e41c8ebc3b7d9db6d861f054a242baf7153f523e18259eff9f7415"
         }
       }
     },
