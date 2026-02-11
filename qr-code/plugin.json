@@ -102,5 +102,15 @@
       "description": "Required for QR code decoding",
       "install_hint": "pip install pyzbar"
     }
-  ]
+  ],
+  "target_input_formats": {
+    "qr": [
+      "txt"
+    ],
+    "qr-decode": [
+      "png",
+      "jpg",
+      "jpeg"
+    ]
+  }
 }

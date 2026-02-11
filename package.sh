@@ -322,19 +322,40 @@ _run_plugin_hook() {
     fi
 }
 
-# Patch dylibs in a subdirectory so they resolve deps from the parent
-# directory via @rpath.  Shared helper for plugin hooks.
+# Patch shared libs in a subdirectory so they resolve deps from the
+# parent directory.  Shared helper for plugin hooks.
 patch_module_deps() {
     local mod_dir="$1"     # directory containing the modules
     local deps_dir="$2"    # directory containing the already-bundled deps
-    local bundle_dir="$3"  # relative subdir name (for install id)
+    local bundle_dir="$3"  # relative subdir name (for install id on macOS)
 
-    for mod in "$mod_dir"/*.dylib "$mod_dir"/*.so; do
+    case "$PLATFORM" in
+        darwin-*)  _patch_module_deps_darwin "$mod_dir" "$deps_dir" "$bundle_dir" ;;
+        linux-*)   _patch_module_deps_linux  "$mod_dir" ;;
+        # Windows: DLLs search their own directory automatically
+    esac
+}
+
+_patch_module_deps_linux() {
+    local mod_dir="$1"
+    for mod in "$mod_dir"/*.so; do
+        [[ -f "$mod" ]] || continue
+        chmod u+w "$mod"
+        patchelf --set-rpath '$ORIGIN/..' "$mod" 2>/dev/null || true
+    done
+}
+
+_patch_module_deps_darwin() {
+    local mod_dir="$1"
+    local deps_dir="$2"
+    local bundle_dir="$3"
+
+    for mod in "$mod_dir"/*.dylib; do
         [[ -f "$mod" ]] || continue
         chmod u+w "$mod"
 
         # Rewrite absolute refs to already-bundled libs → @rpath/
-        for bundled in "$deps_dir"/*.dylib "$deps_dir"/*.so; do
+        for bundled in "$deps_dir"/*.dylib; do
             [[ -f "$bundled" ]] || continue
             local bname
             bname=$(basename "$bundled")
