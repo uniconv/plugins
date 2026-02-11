@@ -33,6 +33,7 @@ target_link_libraries(image_convert PRIVATE
     ${VIPS_LIBRARIES}
     ${CAIRO_LIBRARIES}
     ${POPPLER_GLIB_LIBRARIES}
+    ${CMAKE_DL_LIBS}
 )
 
 # RPATH: find bundled shared libs next to the plugin

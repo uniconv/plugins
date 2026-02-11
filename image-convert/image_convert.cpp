@@ -34,6 +34,10 @@
 #include <vector>
 #include <sys/stat.h>
 
+#ifndef _WIN32
+#include <dlfcn.h>
+#endif
+
 // Plugin info
 static const char *targets[] = {"jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "heic", "heif", "pdf", nullptr};
 static const char *input_formats[] = {"heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "pdf", nullptr};
@@ -426,6 +430,23 @@ extern "C"
 
     UNICONV_EXPORT int uniconv_plugin_init(void)
     {
+#ifndef _WIN32
+        // Point libvips at the bundled vips-modules/ directory so it
+        // finds heif/jxl/poppler loaders shipped with this plugin.
+        Dl_info dl_info;
+        if (dladdr(reinterpret_cast<void *>(uniconv_plugin_init), &dl_info) &&
+            dl_info.dli_fname)
+        {
+            std::string lib_path = dl_info.dli_fname;
+            auto slash = lib_path.find_last_of('/');
+            if (slash != std::string::npos)
+            {
+                std::string mod_path = lib_path.substr(0, slash) + "/vips-modules";
+                setenv("VIPS_MODULE_PATH", mod_path.c_str(), 0);
+            }
+        }
+#endif
+
         if (VIPS_INIT("image-convert"))
         {
             return -1;

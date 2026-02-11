@@ -307,6 +307,79 @@ collect_and_patch_deps() {
     esac
 }
 
+# Run plugin-local packaging hook if present.
+# The hook receives the staging directory as $1 and can bundle
+# extra files, modules, etc.  Shared helpers (collect_and_patch_deps,
+# patch_module_deps, etc.) are available since the hook is sourced.
+_run_plugin_hook() {
+    local plugin_dir="$1"
+    local staging_dir="$2"
+    local hook="$plugin_dir/package.sh"
+
+    if [[ -f "$hook" ]]; then
+        echo "  Running plugin packaging hook ..."
+        source "$hook" "$staging_dir"
+    fi
+}
+
+# Patch dylibs in a subdirectory so they resolve deps from the parent
+# directory via @rpath.  Shared helper for plugin hooks.
+patch_module_deps() {
+    local mod_dir="$1"     # directory containing the modules
+    local deps_dir="$2"    # directory containing the already-bundled deps
+    local bundle_dir="$3"  # relative subdir name (for install id)
+
+    for mod in "$mod_dir"/*.dylib "$mod_dir"/*.so; do
+        [[ -f "$mod" ]] || continue
+        chmod u+w "$mod"
+
+        # Rewrite absolute refs to already-bundled libs → @rpath/
+        for bundled in "$deps_dir"/*.dylib "$deps_dir"/*.so; do
+            [[ -f "$bundled" ]] || continue
+            local bname
+            bname=$(basename "$bundled")
+            local old_ref
+            old_ref=$(otool -L "$mod" 2>/dev/null \
+                | awk -v lib="$bname" '$0 ~ lib {print $1; exit}')
+            [[ -n "$old_ref" && "$old_ref" != "@rpath/$bname" ]] && \
+                install_name_tool -change "$old_ref" "@rpath/$bname" "$mod" 2>/dev/null || true
+        done
+
+        # id + rpath to parent dir (where bundled deps live)
+        install_name_tool -id "@rpath/$bundle_dir/$(basename "$mod")" "$mod" 2>/dev/null || true
+        if ! otool -l "$mod" 2>/dev/null | grep -qF '@loader_path/..'; then
+            install_name_tool -add_rpath '@loader_path/..' "$mod" 2>/dev/null || true
+        fi
+
+        # Strip build-time RPATHs
+        local rpaths
+        rpaths=$(otool -l "$mod" 2>/dev/null \
+            | awk '/cmd LC_RPATH/{getline;getline;print $2}' || true)
+        while IFS= read -r rp; do
+            [[ -z "$rp" ]] && continue
+            [[ "$rp" == "@loader_path/.." ]] && continue
+            install_name_tool -delete_rpath "$rp" "$mod" 2>/dev/null || true
+        done <<< "$rpaths"
+
+        # Neutralize compiled-in Homebrew paths
+        local brew_prefix
+        brew_prefix=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
+        if LC_ALL=C grep -qc "$brew_prefix" "$mod" 2>/dev/null; then
+            python3 -c "
+import sys, pathlib
+p = pathlib.Path(sys.argv[1])
+prefix = sys.argv[2].encode()
+dead = b'/not' + b'_' * (len(prefix) - 4)
+data = p.read_bytes()
+data = data.replace(prefix, dead)
+p.write_bytes(data)
+" "$mod" "$brew_prefix"
+        fi
+
+        codesign -s - -f "$mod" 2>/dev/null || true
+    done
+}
+
 # ---------------------------------------------------------------------------
 
 _find_pkg_lib() {
@@ -455,6 +528,9 @@ package_native_plugin() {
 
     # Bundle shared library dependencies alongside the plugin
     collect_and_patch_deps "$staging/$name/${lib_name}.${lib_ext}" "$staging/$name"
+
+    # Run plugin-specific packaging hook (e.g. bundle runtime modules)
+    _run_plugin_hook "$dir" "$staging/$name"
 
     tar czf "$tarball" -C "$staging" "$name/"
     rm -rf "$staging"
