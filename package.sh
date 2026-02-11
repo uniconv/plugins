@@ -247,6 +247,7 @@ $dep" ;;
     for lib in "$dest_dir"/*.dylib "$plugin_lib"; do
         [[ -f "$lib" ]] || continue
         if LC_ALL=C grep -qc "$brew_prefix" "$lib" 2>/dev/null; then
+            chmod u+w "$lib"
             python3 -c "
 import sys, pathlib
 p = pathlib.Path(sys.argv[1])
