@@ -1,7 +1,7 @@
 {
   "name": "data-convert",
   "scope": "uniconv",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Convert between structured data formats (JSON, YAML, TOML, XML, CSV)",
   "author": "uniconv",
   "license": "MIT",
@@ -18,7 +18,13 @@
   ],
   "interface": "cli",
   "executable": "data-convert.py",
-  "targets": ["json", "yaml", "toml", "xml", "csv"],
+  "targets": [
+    "json",
+    "yaml",
+    "toml",
+    "xml",
+    "csv"
+  ],
   "accepts": [
     "json",
     "yaml",
