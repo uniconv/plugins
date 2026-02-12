@@ -1,7 +1,7 @@
 {
   "name": "audio-convert",
   "scope": "uniconv",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "description": "Audio format conversion and audio extraction from video (mp3, wav, flac, aac, ogg, opus, m4a, wma, aiff, alac, ac3)",
   "author": "uniconv",
   "license": "MIT",
@@ -28,7 +28,27 @@
     "alac": [],
     "ac3": []
   },
-  "accepts": ["mp3", "wav", "flac", "aac", "ogg", "opus", "m4a", "wma", "aiff", "alac", "ac3", "amr", "ape", "mp4", "mov", "avi", "webm", "mkv", "m4v"],
+  "accepts": [
+    "mp3",
+    "wav",
+    "flac",
+    "aac",
+    "ogg",
+    "opus",
+    "m4a",
+    "wma",
+    "aiff",
+    "alac",
+    "ac3",
+    "amr",
+    "ape",
+    "mp4",
+    "mov",
+    "avi",
+    "webm",
+    "mkv",
+    "m4v"
+  ],
   "options": [
     {
       "name": "--bitrate",
