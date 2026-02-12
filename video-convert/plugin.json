@@ -1,7 +1,7 @@
 {
   "name": "video-convert",
   "scope": "uniconv",
-  "version": "1.1.22",
+  "version": "1.1.23",
   "description": "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
   "author": "uniconv",
   "license": "MIT",
@@ -15,7 +15,15 @@
   ],
   "interface": "native",
   "library": "libvideo_convert",
-  "targets": ["mp4", "mov", "avi", "webm", "mkv", "m4v", "gif"],
+  "targets": [
+    "mp4",
+    "mov",
+    "avi",
+    "webm",
+    "mkv",
+    "m4v",
+    "gif"
+  ],
   "accepts": [
     "mp4",
     "mov",
