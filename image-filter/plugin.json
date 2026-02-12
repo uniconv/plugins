@@ -47,12 +47,14 @@
     {
       "name": "--width",
       "type": "int",
+      "required": false,
       "min": 1,
       "description": "Output width in pixels"
     },
     {
       "name": "--height",
       "type": "int",
+      "required": false,
       "min": 1,
       "description": "Output height in pixels"
     },

@@ -19,6 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO="uniconv/plugins"
 DRY_RUN=false
 PUSH=false
+RELEASE_TAGS=()
 
 # --- Helpers ---
 
@@ -197,27 +198,9 @@ with open(manifest_path, 'w') as f:
     fi
     echo ""
 
-    # --- Step 5: Push ---
-
-    echo "--- Step 5: Push ---"
-    if $DRY_RUN; then
-        echo "  [dry-run] Would pull --rebase and push commit and tag to origin"
-    elif $PUSH; then
-        git -C "$SCRIPT_DIR" pull --rebase origin main
-        git -C "$SCRIPT_DIR" push origin HEAD "$TAG"
-        echo "  Pushed commit and tag."
-    else
-        echo "  Skipped (use --push to push commit and tag to origin)"
-    fi
-    echo ""
+    RELEASE_TAGS+=("$TAG")
 
     echo "=== Done: $NAME $TAG released ==="
-    if $PUSH; then
-        echo "  CI will build and create the GitHub Release."
-        echo "  Monitor: https://github.com/$REPO/actions"
-    else
-        echo "  Run with --push to push commit and tag to origin."
-    fi
     echo ""
 }
 
@@ -265,4 +248,29 @@ else
     fi
 
     release_plugin "$NAME" "$BUMP_OR_VERSION"
+fi
+
+# --- Push ---
+
+if [[ ${#RELEASE_TAGS[@]} -eq 0 ]]; then
+    exit 0
+fi
+
+if $DRY_RUN; then
+    echo "=== Push ==="
+    echo "  [dry-run] Would push branch and ${#RELEASE_TAGS[@]} tag(s) to origin"
+elif $PUSH; then
+    echo "=== Pushing to origin ==="
+    git -C "$SCRIPT_DIR" push origin HEAD
+    echo "  Pushed branch."
+    for tag in "${RELEASE_TAGS[@]}"; do
+        git -C "$SCRIPT_DIR" push origin "$tag"
+        echo "  Pushed tag: $tag"
+    done
+    echo ""
+    echo "  CI will build and create GitHub Releases."
+    echo "  Monitor: https://github.com/$REPO/actions"
+else
+    echo "=== Push ==="
+    echo "  Skipped (use --push to push commits and tags to origin)"
 fi

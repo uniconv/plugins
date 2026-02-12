@@ -167,6 +167,7 @@
     {
       "name": "--seed",
       "type": "int",
+      "required": false,
       "description": "Random seed for reproducible output"
     }
   ],

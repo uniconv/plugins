@@ -66,6 +66,7 @@
     {
       "name": "--sample-rate",
       "type": "int",
+      "required": false,
       "choices": [
         "8000",
         "22050",
@@ -78,6 +79,7 @@
     {
       "name": "--channels",
       "type": "int",
+      "required": false,
       "min": 1,
       "max": 2,
       "description": "Output channels (1 = mono, 2 = stereo)"
@@ -93,12 +95,14 @@
     {
       "name": "--start",
       "type": "float",
+      "required": false,
       "min": 0.0,
       "description": "Start time in seconds"
     },
     {
       "name": "--duration",
       "type": "float",
+      "required": false,
       "min": 0.0,
       "description": "Duration in seconds"
     }

@@ -45,12 +45,14 @@
     {
       "name": "--width",
       "type": "int",
+      "required": false,
       "min": 1,
       "description": "Output width in pixels (aspect ratio preserved)"
     },
     {
       "name": "--height",
       "type": "int",
+      "required": false,
       "min": 1,
       "description": "Output height in pixels (aspect ratio preserved)"
     },
@@ -65,12 +67,14 @@
     {
       "name": "--start",
       "type": "float",
+      "required": false,
       "min": 0.0,
       "description": "Start time in seconds"
     },
     {
       "name": "--duration",
       "type": "float",
+      "required": false,
       "min": 0.0,
       "description": "Duration in seconds"
     },

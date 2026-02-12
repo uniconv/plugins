@@ -55,6 +55,7 @@
       "name": "--width",
       "short": "-w",
       "type": "int",
+      "required": false,
       "min": 1,
       "description": "Output width in pixels (aspect ratio preserved)"
     },
@@ -62,6 +63,7 @@
       "name": "--height",
       "short": "-h",
       "type": "int",
+      "required": false,
       "min": 1,
       "description": "Output height in pixels (aspect ratio preserved)"
     }
