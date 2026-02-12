@@ -1,7 +1,7 @@
 {
   "name": "archive",
   "scope": "uniconv",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Archive and compression support (zip, tar, gz, bz2, xz, 7z)",
   "author": "uniconv",
   "license": "MIT",
@@ -33,7 +33,20 @@
     "txz": [],
     "gz": []
   },
-  "accepts": ["zip", "tar", "tar.gz", "tgz", "tar.bz2", "tbz2", "tar.xz", "txz", "gz", "bz2", "xz", "7z"],
+  "accepts": [
+    "zip",
+    "tar",
+    "tar.gz",
+    "tgz",
+    "tar.bz2",
+    "tbz2",
+    "tar.xz",
+    "txz",
+    "gz",
+    "bz2",
+    "xz",
+    "7z"
+  ],
   "options": [
     {
       "name": "--compression-level",
