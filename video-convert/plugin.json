@@ -15,15 +15,7 @@
   ],
   "interface": "native",
   "library": "libvideo_convert",
-  "targets": {
-    "mp4": [],
-    "mov": [],
-    "avi": [],
-    "webm": [],
-    "mkv": [],
-    "m4v": [],
-    "gif": []
-  },
+  "targets": ["mp4", "mov", "avi", "webm", "mkv", "m4v", "gif"],
   "accepts": [
     "mp4",
     "mov",

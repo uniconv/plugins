@@ -25,12 +25,12 @@
     "extract": [],
     "zip": [],
     "tar": [],
-    "tar-gz": [],
-    "tgz": [],
-    "tar-bz2": [],
-    "tbz2": [],
-    "tar-xz": [],
-    "txz": [],
+    "tar-gz": ["tar.gz"],
+    "tgz": ["tar.gz"],
+    "tar-bz2": ["tar.bz2"],
+    "tbz2": ["tar.bz2"],
+    "tar-xz": ["tar.xz"],
+    "txz": ["tar.xz"],
     "gz": []
   },
   "accepts": [

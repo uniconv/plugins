@@ -47,7 +47,6 @@
       "csv"
     ]
   },
-  "accepts": [],
   "options": [
     {
       "name": "--width",

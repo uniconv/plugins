@@ -15,19 +15,7 @@
   ],
   "interface": "native",
   "library": "libaudio_convert",
-  "targets": {
-    "mp3": [],
-    "wav": [],
-    "flac": [],
-    "aac": [],
-    "ogg": [],
-    "opus": [],
-    "m4a": [],
-    "wma": [],
-    "aiff": [],
-    "alac": [],
-    "ac3": []
-  },
+  "targets": ["mp3", "wav", "flac", "aac", "ogg", "opus", "m4a", "wma", "aiff", "alac", "ac3"],
   "accepts": [
     "mp3",
     "wav",

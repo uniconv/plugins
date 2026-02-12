@@ -18,13 +18,7 @@
   ],
   "interface": "cli",
   "executable": "data-convert.py",
-  "targets": {
-    "json": [],
-    "yaml": [],
-    "toml": [],
-    "xml": [],
-    "csv": []
-  },
+  "targets": ["json", "yaml", "toml", "xml", "csv"],
   "accepts": [
     "json",
     "yaml",
