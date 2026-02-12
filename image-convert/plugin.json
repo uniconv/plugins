@@ -1,7 +1,7 @@
 {
   "name": "image-convert",
   "scope": "uniconv",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Image format conversion using libvips",
   "author": "uniconv",
   "license": "MIT",
@@ -29,7 +29,18 @@
     "heif": [],
     "pdf": []
   },
-  "accepts": ["heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "pdf"],
+  "accepts": [
+    "heic",
+    "heif",
+    "jpg",
+    "jpeg",
+    "png",
+    "webp",
+    "gif",
+    "bmp",
+    "tiff",
+    "pdf"
+  ],
   "options": [
     {
       "name": "--quality",
