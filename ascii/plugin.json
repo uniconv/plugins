@@ -1,7 +1,7 @@
 {
   "name": "ascii",
   "scope": "uniconv",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Convert media to ASCII representation",
   "author": "uniconv",
   "license": "MIT",
