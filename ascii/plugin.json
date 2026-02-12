@@ -1,7 +1,7 @@
 {
   "name": "ascii",
   "scope": "uniconv",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Convert media to ASCII representation",
   "author": "uniconv",
   "license": "MIT",
@@ -15,9 +15,18 @@
   "interface": "cli",
   "executable": "ascii.py",
   "targets": {
-    "ascii": ["txt"]
+    "ascii": [
+      "txt"
+    ]
   },
-  "accepts": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],
+  "accepts": [
+    "jpg",
+    "jpeg",
+    "png",
+    "webp",
+    "bmp",
+    "gif"
+  ],
   "options": [
     {
       "name": "--width",
