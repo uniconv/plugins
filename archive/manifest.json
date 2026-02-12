@@ -18,6 +18,31 @@
   ],
   "releases": [
     {
+      "version": "1.0.14",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "py7zr",
+          "type": "python",
+          "description": "Required for 7z archive support (optional)",
+          "install_hint": "pip install py7zr"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/archive-v1.0.14/archive-1.0.14.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.13",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
