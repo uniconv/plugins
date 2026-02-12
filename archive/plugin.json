@@ -1,7 +1,7 @@
 {
   "name": "archive",
   "scope": "uniconv",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "Archive format conversion (zip, tar, gz, bz2, xz, 7z)",
   "author": "uniconv",
   "license": "MIT",
