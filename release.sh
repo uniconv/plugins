@@ -139,7 +139,8 @@ tag = f'{name}-v{version}'
 base_url = f'https://github.com/{repo}/releases/download/{tag}'
 
 has_bundled_libs = bool(plugin.get('bundled_libs'))
-platform_specific = (interface == 'native') or has_bundled_libs
+has_bundled_bins = bool(plugin.get('bundled_bins'))
+platform_specific = (interface == 'native') or has_bundled_libs or has_bundled_bins
 
 if platform_specific:
     artifact = {}

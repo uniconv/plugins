@@ -16,6 +16,7 @@ jobs:
       version: ${{ steps.parse.outputs.version }}
       interface: ${{ steps.detect.outputs.interface }}
       has_native_libs: ${{ steps.native_libs.outputs.has_native_libs }}
+      has_bundled_bins: ${{ steps.native_libs.outputs.has_bundled_bins }}
     steps:
       - uses: actions/checkout@v4
 
@@ -46,9 +47,12 @@ jobs:
         id: native_libs
         run: |
           PLUGIN_JSON="${{ steps.parse.outputs.name }}/plugin.json"
-          HAS_NATIVE=$(python3 -c "import json; d=json.load(open('$PLUGIN_JSON')); print('true' if d.get('bundled_libs') else 'false')")
+          HAS_NATIVE=$(python3 -c "import json; d=json.load(open('$PLUGIN_JSON')); print('true' if d.get('bundled_libs') or d.get('bundled_bins') else 'false')")
+          HAS_BUNDLED_BINS=$(python3 -c "import json; d=json.load(open('$PLUGIN_JSON')); print('true' if d.get('bundled_bins') else 'false')")
           echo "has_native_libs=$HAS_NATIVE" >> "$GITHUB_OUTPUT"
+          echo "has_bundled_bins=$HAS_BUNDLED_BINS" >> "$GITHUB_OUTPUT"
           echo "Has native libs: $HAS_NATIVE"
+          echo "Has bundled bins: $HAS_BUNDLED_BINS"
 
   build-cli:
     needs: detect
@@ -173,10 +177,22 @@ jobs:
       run:
         shell: ${{ matrix.platform == 'windows-x86_64' && 'msys2 {0}' || 'bash' }}
     steps:
+      - name: Skip Windows for bundled_bins plugins
+        id: skip_check
+        shell: bash
+        run: |
+          if [[ "${{ matrix.platform }}" == "windows-x86_64" && "${{ needs.detect.outputs.has_bundled_bins }}" == "true" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Skipping Windows build for bundled_bins plugin"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.skip_check.outputs.skip != 'true'
 
       - name: Setup MSYS2 (Windows)
-        if: matrix.platform == 'windows-x86_64'
+        if: matrix.platform == 'windows-x86_64' && steps.skip_check.outputs.skip != 'true'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -186,19 +202,35 @@ jobs:
             mingw-w64-x86_64-pkg-config
 
       - name: Install native deps (Linux)
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && steps.skip_check.outputs.skip != 'true'
         shell: bash
         run: sudo apt-get update && sudo apt-get install -y pkg-config patchelf libzbar-dev
 
       - name: Install native deps (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && steps.skip_check.outputs.skip != 'true'
         shell: bash
         run: brew install pkg-config zbar
 
+      - name: Install doc-convert deps (Linux)
+        if: runner.os == 'Linux' && needs.detect.outputs.has_bundled_bins == 'true'
+        shell: bash
+        run: |
+          sudo apt-get install -y --no-install-recommends \
+            libreoffice-writer libreoffice-calc libreoffice-impress pandoc
+
+      - name: Install doc-convert deps (macOS)
+        if: runner.os == 'macOS' && needs.detect.outputs.has_bundled_bins == 'true'
+        shell: bash
+        run: |
+          brew install --cask libreoffice
+          brew install pandoc
+
       - name: Package
+        if: steps.skip_check.outputs.skip != 'true'
         run: PLATFORM=${{ matrix.platform }} ./package.sh ${{ needs.detect.outputs.name }}
 
       - name: Upload artifact
+        if: steps.skip_check.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: plugin-${{ matrix.platform }}

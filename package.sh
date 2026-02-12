@@ -431,8 +431,8 @@ package_cli_plugin() {
     pypath=$(python_path "$dir/plugin.json")
     version=$(python3 -c "import json; print(json.load(open('$pypath'))['version'])")
 
-    # Check if this CLI plugin has bundled native libs
-    local bundled_libs
+    # Check if this CLI plugin has bundled native libs or bundled bins
+    local bundled_libs bundled_bins
     bundled_libs=$(python3 -c "
 import json, sys
 d = json.load(open('$pypath'))
@@ -440,8 +440,13 @@ libs = d.get('bundled_libs', [])
 for lib in libs:
     print(lib['pkg_config'] + ':' + lib['lib_name'])
 " 2>/dev/null || true)
+    bundled_bins=$(python3 -c "
+import json, sys
+d = json.load(open('$pypath'))
+print('true' if d.get('bundled_bins') else '')
+" 2>/dev/null || true)
 
-    if [[ -n "$bundled_libs" ]]; then
+    if [[ -n "$bundled_libs" || -n "$bundled_bins" ]]; then
         # Platform-specific packaging with bundled native libs
         local tarball="$DIST_DIR/${name}-${version}-${PLATFORM}.tar.gz"
 
@@ -449,14 +454,17 @@ for lib in libs:
 
         local staging
         staging=$(mktemp -d)
-        mkdir -p "$staging/$name/lib"
+        mkdir -p "$staging/$name"
 
         # Copy plugin files
         for f in "$dir"/*.py "$dir"/plugin.json "$dir"/manifest.json; do
             [[ -f "$f" ]] && cp "$f" "$staging/$name/"
         done
 
-        # Bundle each native lib
+        # Bundle each native lib (if any)
+        if [[ -n "$bundled_libs" ]]; then
+            mkdir -p "$staging/$name/lib"
+        fi
         while IFS= read -r entry; do
             [[ -z "$entry" ]] && continue
             local pkg_config_name="${entry%%:*}"
@@ -478,6 +486,9 @@ for lib in libs:
             # Collect transitive deps and patch load paths
             collect_and_patch_deps "$staging/$name/lib/$lib_base" "$staging/$name/lib"
         done <<< "$bundled_libs"
+
+        # Run plugin-specific packaging hook (e.g. bundle runtime binaries)
+        _run_plugin_hook "$dir" "$staging/$name"
 
         tar czf "$tarball" \
             --exclude='__pycache__' \

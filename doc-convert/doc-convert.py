@@ -26,6 +26,11 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+import platform
+
+# Bundled binary discovery
+_plugin_dir = os.path.dirname(os.path.abspath(__file__))
+_bin_dir = os.path.join(_plugin_dir, 'bin')
 
 # Format categories
 WORD_FORMATS = {'docx', 'doc', 'odt', 'rtf', 'txt', 'html', 'htm', 'pdf', 'epub', 'hwp', 'hwpx'}
@@ -58,7 +63,17 @@ LO_FILTERS = {
 
 
 def find_libreoffice():
-    """Find the LibreOffice executable."""
+    """Find the LibreOffice executable, preferring bundled version."""
+    # Check bundled binary first
+    if platform.system() == 'Darwin':
+        bundled = os.path.join(_bin_dir, 'libreoffice', 'MacOS', 'soffice')
+    else:
+        bundled = os.path.join(_bin_dir, 'libreoffice', 'program', 'soffice')
+
+    if os.path.isfile(bundled):
+        return bundled
+
+    # Fall back to system candidates
     candidates = [
         'libreoffice',
         'soffice',
@@ -79,7 +94,10 @@ def find_libreoffice():
 
 
 def find_pandoc():
-    """Find the Pandoc executable."""
+    """Find the Pandoc executable, preferring bundled version."""
+    bundled = os.path.join(_bin_dir, 'pandoc')
+    if os.path.isfile(bundled):
+        return bundled
     return shutil.which('pandoc')
 
 
@@ -170,6 +188,32 @@ def get_format_category(fmt):
     return 'document'
 
 
+def _get_bundled_lo_env(lo_path):
+    """Build environment overrides when using the bundled LibreOffice."""
+    # Check if the resolved path lives inside our bin/ directory
+    lo_real = os.path.realpath(lo_path)
+    bin_real = os.path.realpath(_bin_dir)
+    if not lo_real.startswith(bin_real + os.sep):
+        return None  # system LO — no extra env needed
+
+    env = os.environ.copy()
+    lo_base = os.path.join(_bin_dir, 'libreoffice')
+
+    if platform.system() == 'Linux':
+        program_dir = os.path.join(lo_base, 'program')
+        # Prepend program dir so LO finds its own shared libs
+        existing = env.get('LD_LIBRARY_PATH', '')
+        env['LD_LIBRARY_PATH'] = program_dir + (':' + existing if existing else '')
+        env['URE_BOOTSTRAP'] = 'file://' + os.path.join(program_dir, 'fundamentalrc')
+    elif platform.system() == 'Darwin':
+        frameworks_dir = os.path.join(lo_base, 'Frameworks')
+        env['URE_BOOTSTRAP'] = 'file://' + os.path.join(lo_base, 'Resources', 'fundamentalrc')
+        existing = env.get('DYLD_LIBRARY_PATH', '')
+        env['DYLD_LIBRARY_PATH'] = frameworks_dir + (':' + existing if existing else '')
+
+    return env
+
+
 def convert_with_libreoffice(input_path, output_path, target_format, password=None):
     """Convert using LibreOffice headless mode."""
     lo_path = find_libreoffice()
@@ -177,6 +221,9 @@ def convert_with_libreoffice(input_path, output_path, target_format, password=No
         return False, "LibreOffice not found. Please install LibreOffice."
 
     target_format = target_format.lower().lstrip('.')
+
+    # Prepare environment for bundled LibreOffice
+    lo_env = _get_bundled_lo_env(lo_path)
 
     # Create a temporary directory for output
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -226,7 +273,8 @@ def convert_with_libreoffice(input_path, output_path, target_format, password=No
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=300  # 5 minute timeout
+                timeout=300,  # 5 minute timeout
+                env=lo_env,
             )
 
             if result.returncode != 0:
