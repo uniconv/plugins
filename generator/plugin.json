@@ -19,20 +19,16 @@
   ],
   "interface": "cli",
   "executable": "generator.py",
-  "targets": [
-    "random-noise",
-    "random-names",
-    "random-urls",
-    "random-lorem",
-    "random-uuid",
-    "random-password",
-    "random-csv"
-  ],
-  "input_formats": [],
-  "input_types": [],
-  "output_types": [
-    "file"
-  ],
+  "targets": {
+    "random-noise": ["png"],
+    "random-names": ["json", "txt"],
+    "random-urls": ["json", "txt"],
+    "random-lorem": ["json", "txt"],
+    "random-uuid": ["json", "txt"],
+    "random-password": ["json", "txt"],
+    "random-csv": ["csv"]
+  },
+  "accepts": [],
   "options": [
     {
       "name": "--width",

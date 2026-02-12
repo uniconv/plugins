@@ -15,25 +15,11 @@
   ],
   "interface": "cli",
   "executable": "image_filter.py",
-  "targets": [
-    "grayscale",
-    "invert"
-  ],
-  "input_formats": [
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "bmp",
-    "gif"
-  ],
-  "input_types": [
-    "image",
-    "file"
-  ],
-  "output_types": [
-    "image"
-  ],
+  "targets": {
+    "grayscale": ["png", "jpg", "webp"],
+    "invert": ["png", "jpg", "webp"]
+  },
+  "accepts": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],
   "options": [
     {
       "name": "--quality",

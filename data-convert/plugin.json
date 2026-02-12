@@ -18,30 +18,14 @@
   ],
   "interface": "cli",
   "executable": "data-convert.py",
-  "targets": [
-    "json",
-    "yaml",
-    "toml",
-    "xml",
-    "csv"
-  ],
-  "input_formats": [
-    "json",
-    "yaml",
-    "yml",
-    "toml",
-    "xml",
-    "csv",
-    "tsv"
-  ],
-  "input_types": [
-    "json",
-    "file"
-  ],
-  "output_types": [
-    "json",
-    "file"
-  ],
+  "targets": {
+    "json": [],
+    "yaml": [],
+    "toml": [],
+    "xml": [],
+    "csv": []
+  },
+  "accepts": ["json", "yaml", "yml", "toml", "xml", "csv", "tsv"],
   "options": [
     {
       "name": "--indent",

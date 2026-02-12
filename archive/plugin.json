@@ -20,39 +20,20 @@
   ],
   "interface": "cli",
   "executable": "archive.py",
-  "targets": [
-    "decompress",
-    "extract",
-    "zip",
-    "tar",
-    "tar-gz",
-    "tgz",
-    "tar-bz2",
-    "tbz2",
-    "tar-xz",
-    "txz",
-    "gz"
-  ],
-  "input_formats": [
-    "zip",
-    "tar",
-    "tar.gz",
-    "tgz",
-    "tar.bz2",
-    "tbz2",
-    "tar.xz",
-    "txz",
-    "gz",
-    "bz2",
-    "xz",
-    "7z"
-  ],
-  "input_types": [
-    "file"
-  ],
-  "output_types": [
-    "file"
-  ],
+  "targets": {
+    "decompress": [],
+    "extract": [],
+    "zip": [],
+    "tar": [],
+    "tar-gz": [],
+    "tgz": [],
+    "tar-bz2": [],
+    "tbz2": [],
+    "tar-xz": [],
+    "txz": [],
+    "gz": []
+  },
+  "accepts": ["zip", "tar", "tar.gz", "tgz", "tar.bz2", "tbz2", "tar.xz", "txz", "gz", "bz2", "xz", "7z"],
   "options": [
     {
       "name": "--compression-level",

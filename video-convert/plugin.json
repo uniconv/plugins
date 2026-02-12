@@ -15,32 +15,16 @@
   ],
   "interface": "native",
   "library": "libvideo_convert",
-  "targets": [
-    "mp4",
-    "mov",
-    "avi",
-    "webm",
-    "mkv",
-    "m4v",
-    "gif"
-  ],
-  "input_formats": [
-    "mp4",
-    "mov",
-    "avi",
-    "webm",
-    "mkv",
-    "m4v",
-    "gif"
-  ],
-  "input_types": [
-    "video",
-    "file"
-  ],
-  "output_types": [
-    "video",
-    "image"
-  ],
+  "targets": {
+    "mp4": [],
+    "mov": [],
+    "avi": [],
+    "webm": [],
+    "mkv": [],
+    "m4v": [],
+    "gif": []
+  },
+  "accepts": ["mp4", "mov", "avi", "webm", "mkv", "m4v", "gif"],
   "options": [
     {
       "name": "--fps",

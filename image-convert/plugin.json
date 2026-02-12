@@ -17,37 +17,19 @@
   ],
   "interface": "native",
   "library": "libimage_convert",
-  "targets": [
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "gif",
-    "bmp",
-    "tiff",
-    "heic",
-    "heif",
-    "pdf"
-  ],
-  "input_formats": [
-    "heic",
-    "heif",
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "gif",
-    "bmp",
-    "tiff",
-    "pdf"
-  ],
-  "input_types": [
-    "image",
-    "file"
-  ],
-  "output_types": [
-    "image"
-  ],
+  "targets": {
+    "jpg": [],
+    "jpeg": [],
+    "png": [],
+    "webp": [],
+    "gif": [],
+    "bmp": [],
+    "tiff": [],
+    "heic": [],
+    "heif": [],
+    "pdf": []
+  },
+  "accepts": ["heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "pdf"],
   "options": [
     {
       "name": "--quality",

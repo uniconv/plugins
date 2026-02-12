@@ -15,49 +15,20 @@
   ],
   "interface": "native",
   "library": "libaudio_convert",
-  "targets": [
-    "mp3",
-    "wav",
-    "flac",
-    "aac",
-    "ogg",
-    "opus",
-    "m4a",
-    "wma",
-    "aiff",
-    "alac",
-    "ac3"
-  ],
-  "input_formats": [
-    "mp3",
-    "wav",
-    "flac",
-    "aac",
-    "ogg",
-    "opus",
-    "m4a",
-    "wma",
-    "aiff",
-    "alac",
-    "ac3",
-    "amr",
-    "ape",
-    "mp4",
-    "mov",
-    "avi",
-    "webm",
-    "mkv",
-    "m4v"
-  ],
-  "input_types": [
-    "audio",
-    "video",
-    "file"
-  ],
-  "output_types": [
-    "audio",
-    "file"
-  ],
+  "targets": {
+    "mp3": [],
+    "wav": [],
+    "flac": [],
+    "aac": [],
+    "ogg": [],
+    "opus": [],
+    "m4a": [],
+    "wma": [],
+    "aiff": [],
+    "alac": [],
+    "ac3": []
+  },
+  "accepts": ["mp3", "wav", "flac", "aac", "ogg", "opus", "m4a", "wma", "aiff", "alac", "ac3", "amr", "ape", "mp4", "mov", "avi", "webm", "mkv", "m4v"],
   "options": [
     {
       "name": "--bitrate",

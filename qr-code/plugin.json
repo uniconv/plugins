@@ -22,22 +22,11 @@
       "lib_name": "zbar"
     }
   ],
-  "targets": [
-    "qr",
-    "qr-decode"
-  ],
-  "input_formats": [
-    "txt",
-    "png",
-    "jpg",
-    "jpeg"
-  ],
-  "input_types": [
-    "file"
-  ],
-  "output_types": [
-    "file"
-  ],
+  "targets": {
+    "qr": ["png"],
+    "qr-decode": ["txt"]
+  },
+  "accepts": ["txt", "png", "jpg", "jpeg"],
   "options": [
     {
       "name": "--scale",

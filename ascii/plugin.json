@@ -14,24 +14,10 @@
   ],
   "interface": "cli",
   "executable": "ascii.py",
-  "targets": [
-    "ascii"
-  ],
-  "input_formats": [
-    "jpg",
-    "jpeg",
-    "png",
-    "webp",
-    "bmp",
-    "gif"
-  ],
-  "input_types": [
-    "image",
-    "file"
-  ],
-  "output_types": [
-    "text"
-  ],
+  "targets": {
+    "ascii": ["txt"]
+  },
+  "accepts": ["jpg", "jpeg", "png", "webp", "bmp", "gif"],
   "options": [
     {
       "name": "--width",
