@@ -27,6 +27,10 @@ bundle_pandoc() {
     cp -L "$pandoc_path" "$BIN_DIR/pandoc"
     chmod +x "$BIN_DIR/pandoc"
     echo "    Bundled: pandoc"
+
+    # Collect transitive shared-lib deps and patch load paths
+    # (same approach as image-convert's native library bundling)
+    collect_and_patch_deps "$BIN_DIR/pandoc" "$BIN_DIR"
 }
 
 # ---------------------------------------------------------------------------
@@ -110,7 +114,12 @@ bundle_libreoffice_darwin() {
 
     strip_libreoffice "$lo_dest"
 
-    # Re-sign after stripping (required on Apple Silicon)
+    # Collect transitive deps for soffice and patch load paths
+    if [[ -f "$lo_dest/MacOS/soffice" ]]; then
+        collect_and_patch_deps "$lo_dest/MacOS/soffice" "$lo_dest/Frameworks"
+    fi
+
+    # Re-sign after stripping/patching (required on Apple Silicon)
     find "$lo_dest" \( -name "*.dylib" -o -name "soffice" \) -exec codesign -s - -f {} + 2>/dev/null || true
 
     echo "    Bundled: libreoffice (macOS)"
@@ -137,16 +146,19 @@ bundle_libreoffice_linux() {
 
     strip_libreoffice "$lo_dest"
 
-    # Patch RPATHs so LO finds its own libs
+    # Collect transitive deps for the soffice binary and patch load paths
+    if [[ -f "$lo_dest/program/soffice.bin" ]]; then
+        collect_and_patch_deps "$lo_dest/program/soffice.bin" "$lo_dest/program"
+    elif [[ -f "$lo_dest/program/soffice" ]]; then
+        collect_and_patch_deps "$lo_dest/program/soffice" "$lo_dest/program"
+    fi
+
+    # Ensure all LO shared libs have RPATH set to $ORIGIN
     if command -v patchelf >/dev/null 2>&1; then
         echo "    Patching RPATHs ..."
-        find "$lo_dest/program" -name "*.so" -o -name "*.so.*" 2>/dev/null | while IFS= read -r lib; do
+        find "$lo_dest/program" \( -name "*.so" -o -name "*.so.*" \) 2>/dev/null | while IFS= read -r lib; do
             patchelf --set-rpath '$ORIGIN' "$lib" 2>/dev/null || true
         done
-        # Patch soffice.bin if present
-        if [[ -f "$lo_dest/program/soffice.bin" ]]; then
-            patchelf --set-rpath '$ORIGIN' "$lo_dest/program/soffice.bin" 2>/dev/null || true
-        fi
     fi
 
     echo "    Bundled: libreoffice (Linux)"
