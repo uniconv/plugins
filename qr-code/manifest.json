@@ -14,6 +14,55 @@
   ],
   "releases": [
     {
+      "version": "1.0.17",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "segno",
+          "type": "python",
+          "description": "Required for QR code generation",
+          "install_hint": "pip install segno"
+        },
+        {
+          "name": "Pillow",
+          "type": "python",
+          "description": "Required for QR code decoding",
+          "install_hint": "pip install Pillow"
+        },
+        {
+          "name": "pyzbar",
+          "type": "python",
+          "description": "Required for QR code decoding",
+          "install_hint": "pip install pyzbar"
+        }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.17/qr-code-1.0.17-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.17/qr-code-1.0.17-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.17/qr-code-1.0.17-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/qr-code-v1.0.17/qr-code-1.0.17-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.16",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
