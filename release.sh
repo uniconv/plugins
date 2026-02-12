@@ -262,10 +262,10 @@ if $DRY_RUN; then
     echo "  [dry-run] Would push branch and ${#RELEASE_TAGS[@]} tag(s) to origin"
 elif $PUSH; then
     echo "=== Pushing to origin ==="
+    git -C "$SCRIPT_DIR" pull --rebase origin HEAD
     git -C "$SCRIPT_DIR" push origin HEAD
     echo "  Pushed branch."
     for tag in "${RELEASE_TAGS[@]}"; do
-        git pull --rebase
         git -C "$SCRIPT_DIR" push origin "$tag"
         echo "  Pushed tag: $tag"
     done
