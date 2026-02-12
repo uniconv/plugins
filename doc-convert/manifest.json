@@ -17,6 +17,56 @@
   ],
   "releases": [
     {
+      "version": "1.0.29",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "pdf2docx",
+          "type": "python",
+          "version": ">=0.5.0",
+          "description": "Required for PDF to DOCX conversion"
+        },
+        {
+          "name": "pyhwp",
+          "type": "python",
+          "optional": true,
+          "description": "Required for HWP conversion on systems where LibreOffice lacks the HWP filter",
+          "install_hint": "pip install pyhwp six"
+        },
+        {
+          "name": "six",
+          "type": "python",
+          "optional": true,
+          "description": "Required by pyhwp (missing transitive dependency)"
+        }
+      ],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.29/doc-convert-1.0.29-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.29/doc-convert-1.0.29-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.29/doc-convert-1.0.29-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.29/doc-convert-1.0.29-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.0.28",
       "uniconv_compat": ">=0.1.0",
       "interface": "cli",
