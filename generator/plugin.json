@@ -1,7 +1,7 @@
 {
   "name": "generator",
   "scope": "uniconv",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Generate random test data: noise images, fake names, URLs, lorem ipsum, UUIDs, passwords, and CSV",
   "author": "uniconv",
   "license": "MIT",
