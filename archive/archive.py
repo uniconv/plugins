@@ -2,19 +2,18 @@
 """
 uniconv CLI Plugin: archive
 
-Archive and compression support.
+Archive format conversion (transcoding).
 
 Usage:
     archive.py --input <file> --target <format> [--output <file>] [options]
 
 Targets:
-    decompress / extract    Extract archive -> N files (scatter)
-    zip                     Create zip archive
-    tar                     Create tar archive
-    tar-gz / tgz            Create tar.gz archive
-    tar-bz2 / tbz2         Create tar.bz2 archive
-    tar-xz / txz           Create tar.xz archive
-    gz                      Gzip compress a single file
+    zip                     Convert to zip
+    tar                     Convert to tar
+    tar-gz / tgz            Convert to tar.gz
+    tar-bz2 / tbz2         Convert to tar.bz2
+    tar-xz / txz           Convert to tar.xz
+    gz                      Convert to gzip (single file archives only)
 
 Supported input formats:
     zip, tar, tar.gz, tgz, tar.bz2, tbz2, tar.xz, txz, gz, bz2, xz, 7z
@@ -50,7 +49,6 @@ FORMAT_ALIASES = {
     "tgz": "tar-gz",
     "tbz2": "tar-bz2",
     "txz": "tar-xz",
-    "extract": "decompress",
 }
 
 # Map extensions to archive type
@@ -107,7 +105,7 @@ def detect_archive_format(filepath):
 
 
 # ---------------------------------------------------------------------------
-# Decompress / Extract (scatter: 1 -> N)
+# Extraction helpers (used internally for transcoding)
 # ---------------------------------------------------------------------------
 
 def extract_zip(filepath, dest_dir):
@@ -256,7 +254,7 @@ def do_decompress(input_path, output_dir):
 
 
 # ---------------------------------------------------------------------------
-# Compress (collect: N -> 1, or 1 -> 1)
+# Compression helpers (used internally for transcoding)
 # ---------------------------------------------------------------------------
 
 def _gather_input_files(input_path):
@@ -327,7 +325,7 @@ def do_compress(input_path, target, output_path, compression_level=6):
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Archive and compression support")
+    parser = argparse.ArgumentParser(description="Archive format conversion")
 
     # Universal arguments (passed by uniconv core)
     parser.add_argument("--input", required=True, help="Input file path")
@@ -354,85 +352,11 @@ def main():
     target = args.target.lower()
     resolved_target = FORMAT_ALIASES.get(target, target)
 
-    # --- Decompress / Extract ---
-    if resolved_target == "decompress":
-        return handle_decompress(args)
-
-    # --- Compress ---
-    return handle_compress(args, target, resolved_target)
+    return handle_transcode(args, target, resolved_target)
 
 
-def handle_decompress(args):
-    """Handle decompress/extract target (scatter: 1 -> N)."""
-    # Create output directory for extracted files
-    output_dir = os.path.dirname(args.output) if args.output else os.path.dirname(args.input)
-    if not output_dir:
-        output_dir = "."
-    os.makedirs(output_dir, exist_ok=True)
-
-    # Use a temp directory for extraction
-    temp_dir = tempfile.mkdtemp(prefix="uniconv_archive_")
-
-    try:
-        files = do_decompress(args.input, temp_dir)
-    except Exception as e:
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print(json.dumps({
-            "success": False,
-            "error": f"Failed to extract archive: {e}",
-        }))
-        return 1
-
-    if not files:
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print(json.dumps({
-            "success": False,
-            "error": "Archive is empty or contains no files",
-        }))
-        return 1
-
-    # Dry run
-    if args.dry_run:
-        filenames = [os.path.basename(f) for f in files]
-        shutil.rmtree(temp_dir, ignore_errors=True)
-        print(json.dumps({
-            "success": True,
-            "outputs": filenames,
-            "extra": {"dry_run": True, "file_count": len(filenames)},
-        }))
-        return 0
-
-    # Move files to output directory
-    final_files = []
-    for fpath in files:
-        fname = os.path.basename(fpath)
-        dest = os.path.join(output_dir, fname)
-        if os.path.exists(dest) and not args.force:
-            # Add numeric suffix to avoid overwriting
-            stem, ext = os.path.splitext(fname)
-            counter = 1
-            while os.path.exists(dest):
-                dest = os.path.join(output_dir, f"{stem}_{counter}{ext}")
-                counter += 1
-        shutil.move(fpath, dest)
-        final_files.append(dest)
-
-    shutil.rmtree(temp_dir, ignore_errors=True)
-
-    # Return outputs array for scatter
-    print(json.dumps({
-        "success": True,
-        "outputs": final_files,
-        "extra": {
-            "file_count": len(final_files),
-            "archive_format": detect_archive_format(args.input),
-        },
-    }))
-    return 0
-
-
-def handle_compress(args, target, resolved_target):
-    """Handle compression targets (N -> 1 or 1 -> 1)."""
+def handle_transcode(args, target, resolved_target):
+    """Handle archive-to-archive conversion."""
     # Determine output path
     ext = TARGET_EXTENSIONS.get(resolved_target)
     if ext is None:
@@ -468,24 +392,27 @@ def handle_compress(args, target, resolved_target):
         }))
         return 1
 
-    # Transcode: if input is an archive, extract first then recompress
-    compress_input = args.input
-    temp_extract_dir = None
+    # Require archive input for transcoding
+    input_format = detect_archive_format(args.input)
+    if input_format is None:
+        print(json.dumps({
+            "success": False,
+            "error": f"Input is not a recognized archive format: {args.input}",
+        }))
+        return 1
 
-    if not os.path.isdir(args.input):
-        input_format = detect_archive_format(args.input)
-        if input_format is not None:
-            temp_extract_dir = tempfile.mkdtemp(prefix="uniconv_transcode_")
-            try:
-                do_decompress(args.input, temp_extract_dir)
-                compress_input = temp_extract_dir
-            except Exception as e:
-                shutil.rmtree(temp_extract_dir, ignore_errors=True)
-                print(json.dumps({
-                    "success": False,
-                    "error": f"Failed to extract input archive for transcoding: {e}",
-                }))
-                return 1
+    # Extract input archive, then recompress to target format
+    temp_extract_dir = tempfile.mkdtemp(prefix="uniconv_transcode_")
+    try:
+        do_decompress(args.input, temp_extract_dir)
+        compress_input = temp_extract_dir
+    except Exception as e:
+        shutil.rmtree(temp_extract_dir, ignore_errors=True)
+        print(json.dumps({
+            "success": False,
+            "error": f"Failed to extract input archive for transcoding: {e}",
+        }))
+        return 1
 
     # Compress
     try:
@@ -499,24 +426,17 @@ def handle_compress(args, target, resolved_target):
         # Clean up partial output
         if os.path.exists(output_path):
             os.remove(output_path)
-        if temp_extract_dir:
-            shutil.rmtree(temp_extract_dir, ignore_errors=True)
+        shutil.rmtree(temp_extract_dir, ignore_errors=True)
         print(json.dumps({
             "success": False,
             "error": f"Failed to create archive: {e}",
         }))
         return 1
 
-    if temp_extract_dir:
-        shutil.rmtree(temp_extract_dir, ignore_errors=True)
+    shutil.rmtree(temp_extract_dir, ignore_errors=True)
 
     output_size = os.path.getsize(output_path)
-    input_size = (
-        sum(os.path.getsize(os.path.join(r, f))
-            for r, _, fs in os.walk(args.input) for f in fs)
-        if os.path.isdir(args.input)
-        else os.path.getsize(args.input)
-    )
+    input_size = os.path.getsize(args.input)
 
     print(json.dumps({
         "success": True,

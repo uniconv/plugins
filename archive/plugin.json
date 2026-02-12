@@ -2,27 +2,21 @@
   "name": "archive",
   "scope": "uniconv",
   "version": "1.0.19",
-  "description": "Archive and compression support (zip, tar, gz, bz2, xz, 7z)",
+  "description": "Archive format conversion (zip, tar, gz, bz2, xz, 7z)",
   "author": "uniconv",
   "license": "MIT",
   "repository": "https://github.com/uniconv/plugins",
   "keywords": [
-    "archive",
     "zip",
     "tar",
     "gz",
     "bz2",
     "xz",
-    "7z",
-    "compress",
-    "decompress",
-    "extract"
+    "7z"
   ],
   "interface": "cli",
   "executable": "archive.py",
   "targets": {
-    "decompress": [],
-    "extract": [],
     "zip": [],
     "tar": [],
     "tar-gz": [
