@@ -1,7 +1,7 @@
 {
   "name": "doc-convert",
   "scope": "uniconv",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Convert between document formats using LibreOffice",
   "author": "uniconv",
   "license": "MIT",
@@ -37,7 +37,27 @@
     "epub": [],
     "md": []
   },
-  "accepts": ["pdf", "docx", "doc", "odt", "rtf", "txt", "html", "htm", "hwp", "hwpx", "xlsx", "xls", "ods", "csv", "pptx", "ppt", "odp", "epub", "md"],
+  "accepts": [
+    "pdf",
+    "docx",
+    "doc",
+    "odt",
+    "rtf",
+    "txt",
+    "html",
+    "htm",
+    "hwp",
+    "hwpx",
+    "xlsx",
+    "xls",
+    "ods",
+    "csv",
+    "pptx",
+    "ppt",
+    "odp",
+    "epub",
+    "md"
+  ],
   "options": [
     {
       "name": "--pages",
