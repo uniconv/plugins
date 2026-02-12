@@ -1,7 +1,7 @@
 {
   "name": "qr-code",
   "scope": "uniconv",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Generate and decode QR codes",
   "author": "uniconv",
   "license": "MIT",
@@ -23,10 +23,19 @@
     }
   ],
   "targets": {
-    "qr": ["png"],
-    "qr-decode": ["txt"]
+    "qr": [
+      "png"
+    ],
+    "qr-decode": [
+      "txt"
+    ]
   },
-  "accepts": ["txt", "png", "jpg", "jpeg"],
+  "accepts": [
+    "txt",
+    "png",
+    "jpg",
+    "jpeg"
+  ],
   "options": [
     {
       "name": "--scale",
