@@ -265,6 +265,7 @@ elif $PUSH; then
     git -C "$SCRIPT_DIR" push origin HEAD
     echo "  Pushed branch."
     for tag in "${RELEASE_TAGS[@]}"; do
+        git pull --rebase
         git -C "$SCRIPT_DIR" push origin "$tag"
         echo "  Pushed tag: $tag"
     done
