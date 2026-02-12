@@ -30,4 +30,11 @@ for mod in "$mod_src"/*.dylib "$mod_src"/*.so; do
     echo "    Bundled: $(basename "$mod")"
 done
 
+# Bundle transitive deps of vips-modules (e.g. libheif for vips-heif)
+# into the parent staging dir so patch_module_deps can resolve them.
+for mod in "$mod_dest"/*.dylib "$mod_dest"/*.so; do
+    [[ -f "$mod" ]] || continue
+    collect_and_patch_deps "$mod" "$staging_dir"
+done
+
 patch_module_deps "$mod_dest" "$staging_dir" "vips-modules"
