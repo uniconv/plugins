@@ -331,14 +331,14 @@ patch_module_deps() {
 
     case "$PLATFORM" in
         darwin-*)  _patch_module_deps_darwin "$mod_dir" "$deps_dir" "$bundle_dir" ;;
-        linux-*)   _patch_module_deps_linux  "$mod_dir" ;;
+        linux-*)   _patch_module_deps_linux  "$mod_dir" "$bundle_dir" ;;
         # Windows: DLLs search their own directory automatically
     esac
 }
 
 _patch_module_deps_linux() {
     local mod_dir="$1"
-    local bundle_dir="$3"
+    local bundle_dir="$2"
 
     # Compute relative path depth from bundle_dir segments
     local depth
