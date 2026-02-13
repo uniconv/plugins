@@ -431,8 +431,9 @@ extern "C"
     UNICONV_EXPORT int uniconv_plugin_init(void)
     {
 #ifndef _WIN32
-        // Point libvips at the bundled vips-modules/ directory so it
-        // finds heif/jxl/poppler loaders shipped with this plugin.
+        // Tell libvips where to find the bundled vips-modules/ directory
+        // (heif, jxl, poppler loaders).  VIPSHOME causes libvips to search
+        // <VIPSHOME>/lib/vips-modules-<MAJOR>.<MINOR>/ for loadable modules.
         Dl_info dl_info;
         if (dladdr(reinterpret_cast<void *>(uniconv_plugin_init), &dl_info) &&
             dl_info.dli_fname)
@@ -441,8 +442,8 @@ extern "C"
             auto slash = lib_path.find_last_of('/');
             if (slash != std::string::npos)
             {
-                std::string mod_path = lib_path.substr(0, slash) + "/vips-modules";
-                setenv("VIPS_MODULE_PATH", mod_path.c_str(), 0);
+                std::string plugin_dir = lib_path.substr(0, slash);
+                setenv("VIPSHOME", plugin_dir.c_str(), 0);
             }
         }
 #endif

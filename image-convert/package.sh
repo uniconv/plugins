@@ -20,7 +20,12 @@ if [[ -z "$mod_src" ]]; then
     return
 fi
 
-local mod_dest="$staging_dir/vips-modules"
+# Preserve the versioned directory name (e.g. vips-modules-8.18) and
+# place it under lib/ so that VIPSHOME-based discovery works:
+#   VIPSHOME=<plugin_dir> → libvips searches <plugin_dir>/lib/vips-modules-X.Y/
+local mod_basename
+mod_basename=$(basename "$mod_src")
+local mod_dest="$staging_dir/lib/$mod_basename"
 mkdir -p "$mod_dest"
 echo "  Bundling vips modules from $mod_src ..."
 
@@ -37,4 +42,4 @@ for mod in "$mod_dest"/*.dylib "$mod_dest"/*.so; do
     collect_and_patch_deps "$mod" "$staging_dir"
 done
 
-patch_module_deps "$mod_dest" "$staging_dir" "vips-modules"
+patch_module_deps "$mod_dest" "$staging_dir" "lib/$mod_basename"

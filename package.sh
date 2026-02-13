@@ -338,10 +338,18 @@ patch_module_deps() {
 
 _patch_module_deps_linux() {
     local mod_dir="$1"
+    local bundle_dir="$3"
+
+    # Compute relative path depth from bundle_dir segments
+    local depth
+    depth=$(echo "$bundle_dir" | tr '/' '\n' | grep -c .)
+    local rel=""
+    for ((i = 0; i < depth; i++)); do rel="$rel/.."; done
+
     for mod in "$mod_dir"/*.so; do
         [[ -f "$mod" ]] || continue
         chmod u+w "$mod"
-        patchelf --set-rpath '$ORIGIN/..' "$mod" 2>/dev/null || true
+        patchelf --set-rpath "\$ORIGIN$rel" "$mod" 2>/dev/null || true
     done
 }
 
@@ -349,6 +357,15 @@ _patch_module_deps_darwin() {
     local mod_dir="$1"
     local deps_dir="$2"
     local bundle_dir="$3"
+
+    # Compute @loader_path-relative RPATH from bundle_dir depth.
+    # e.g. "vips-modules" → @loader_path/..
+    #      "lib/vips-modules-8.18" → @loader_path/../..
+    local depth
+    depth=$(echo "$bundle_dir" | tr '/' '\n' | grep -c .)
+    local rel=""
+    for ((i = 0; i < depth; i++)); do rel="$rel/.."; done
+    local target_rpath="@loader_path$rel"
 
     for mod in "$mod_dir"/*.dylib; do
         [[ -f "$mod" ]] || continue
@@ -366,19 +383,19 @@ _patch_module_deps_darwin() {
                 install_name_tool -change "$old_ref" "@rpath/$bname" "$mod" 2>/dev/null || true
         done
 
-        # id + rpath to parent dir (where bundled deps live)
+        # id + rpath to deps dir (where bundled deps live)
         install_name_tool -id "@rpath/$bundle_dir/$(basename "$mod")" "$mod" 2>/dev/null || true
-        if ! otool -l "$mod" 2>/dev/null | grep -qF '@loader_path/..'; then
-            install_name_tool -add_rpath '@loader_path/..' "$mod" 2>/dev/null || true
+        if ! otool -l "$mod" 2>/dev/null | grep -qF "$target_rpath"; then
+            install_name_tool -add_rpath "$target_rpath" "$mod" 2>/dev/null || true
         fi
 
-        # Strip build-time RPATHs
+        # Strip build-time RPATHs (keep only the computed target)
         local rpaths
         rpaths=$(otool -l "$mod" 2>/dev/null \
             | awk '/cmd LC_RPATH/{getline;getline;print $2}' || true)
         while IFS= read -r rp; do
             [[ -z "$rp" ]] && continue
-            [[ "$rp" == "@loader_path/.." ]] && continue
+            [[ "$rp" == "$target_rpath" ]] && continue
             install_name_tool -delete_rpath "$rp" "$mod" 2>/dev/null || true
         done <<< "$rpaths"
 
