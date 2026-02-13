@@ -1,5 +1,6 @@
 {
   "name": "ascii",
+  "scope": "uniconv",
   "description": "Convert media to ASCII representation",
   "author": "uniconv",
   "license": "MIT",

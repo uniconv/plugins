@@ -1,5 +1,6 @@
 {
   "name": "audio-convert",
+  "scope": "uniconv",
   "description": "Audio format conversion and audio extraction from video (mp3, wav, flac, aac, ogg, opus, m4a, wma, aiff, alac, ac3)",
   "author": "uniconv",
   "license": "MIT",

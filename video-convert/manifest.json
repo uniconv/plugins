@@ -1,5 +1,6 @@
 {
   "name": "video-convert",
+  "scope": "uniconv",
   "description": "Bidirectional video format conversion (mp4, mov, avi, webm, mkv, m4v, gif)",
   "author": "uniconv",
   "license": "MIT",

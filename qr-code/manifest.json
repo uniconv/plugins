@@ -1,5 +1,6 @@
 {
   "name": "qr-code",
+  "scope": "uniconv",
   "description": "Generate and decode QR codes",
   "author": "uniconv",
   "license": "MIT",

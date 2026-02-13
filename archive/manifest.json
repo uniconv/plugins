@@ -1,5 +1,6 @@
 {
   "name": "archive",
+  "scope": "uniconv",
   "description": "Archive format conversion (zip, tar, gz, bz2, xz, 7z)",
   "author": "uniconv",
   "license": "MIT",
