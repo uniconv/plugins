@@ -109,9 +109,8 @@
       "install_hint": "pip install Pillow"
     },
     {
-      "name": "rembg",
+      "name": "rembg[cpu]",
       "type": "python",
-      "optional": true,
       "install_hint": "pip install \"rembg[cpu]\""
     }
   ]
