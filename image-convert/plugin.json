@@ -39,7 +39,8 @@
     "gif",
     "bmp",
     "tiff",
-    "pdf"
+    "pdf",
+    "svg"
   ],
   "options": [
     {

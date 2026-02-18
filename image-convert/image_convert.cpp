@@ -40,7 +40,7 @@
 
 // Plugin info
 static const char *targets[] = {"jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "heic", "heif", "pdf", nullptr};
-static const char *input_formats[] = {"heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "pdf", nullptr};
+static const char *input_formats[] = {"heic", "heif", "jpg", "jpeg", "png", "webp", "gif", "bmp", "tiff", "pdf", "svg", nullptr};
 
 // Data type information
 static UniconvDataType input_types[] = {UNICONV_DATA_IMAGE, UNICONV_DATA_FILE, (UniconvDataType)0};
