@@ -1,7 +1,7 @@
 {
   "name": "image-filter",
   "scope": "uniconv",
-  "description": "Apply image filters (grayscale, invert) using Python/Pillow",
+  "description": "Apply image filters (grayscale, invert, rembg) using Python/Pillow",
   "author": "uniconv",
   "license": "MIT",
   "repository": "https://github.com/uniconv/plugins",
@@ -9,10 +9,42 @@
     "image",
     "grayscale",
     "invert",
+    "rembg",
     "filter",
     "conversion"
   ],
   "releases": [
+    {
+      "version": "1.0.22",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "Pillow",
+          "type": "python",
+          "version": ">=9.0",
+          "install_hint": "pip install Pillow"
+        },
+        {
+          "name": "rembg",
+          "type": "python",
+          "optional": true,
+          "install_hint": "pip install \"rembg[cpu]\""
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/image-filter-v1.0.22/image-filter-1.0.22.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
     {
       "version": "1.0.21",
       "uniconv_compat": ">=0.1.0",
