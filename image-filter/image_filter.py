@@ -2,7 +2,7 @@
 """
 uniconv CLI Plugin: image-filter
 
-Applies image filters (grayscale, invert) using Python/Pillow.
+Applies image filters (grayscale, invert, rembg) using Python/Pillow.
 
 Usage:
     image_filter.py --input <file> --target <filter> [--output <file>] [options]
@@ -10,10 +10,12 @@ Usage:
 Supported targets:
     grayscale, gray, bw  - Convert to grayscale
     invert, negative     - Invert image colors
+    rembg                - Remove image background
 
 Plugin options:
     --method <method>  Grayscale conversion method: luminosity, average, lightness
                        (only applies to grayscale targets; default: luminosity)
+    --model <model>    Background removal model (only applies to rembg; default: u2net)
     --quality <int>    Output quality 1-100 (default: 85)
     --width <int>      Output width in pixels
     --height <int>     Output height in pixels
@@ -27,6 +29,7 @@ import os
 
 GRAYSCALE_TARGETS = {'grayscale', 'gray', 'bw'}
 INVERT_TARGETS = {'invert', 'negative'}
+REMBG_TARGETS = {'rembg'}
 
 
 def main():
@@ -46,6 +49,8 @@ def main():
     parser.add_argument('--method', default='luminosity',
                        choices=['luminosity', 'average', 'lightness'],
                        help='Grayscale conversion method')
+    parser.add_argument('--model', default='u2net',
+                       help='Background removal model (rembg target)')
 
     args, _ = parser.parse_known_args()
 
@@ -71,10 +76,11 @@ def main():
 
     # Validate target
     target_lower = args.target.lower()
-    if target_lower not in GRAYSCALE_TARGETS and target_lower not in INVERT_TARGETS:
+    all_targets = GRAYSCALE_TARGETS | INVERT_TARGETS | REMBG_TARGETS
+    if target_lower not in all_targets:
         result = {
             "success": False,
-            "error": f"Unknown target: {args.target}. Supported: grayscale, gray, bw, invert, negative"
+            "error": f"Unknown target: {args.target}. Supported: grayscale, gray, bw, invert, negative, rembg"
         }
         print(json.dumps(result))
         return 1
@@ -84,16 +90,19 @@ def main():
     if not input_ext:
         input_ext = '.jpg'  # Default fallback
 
+    # rembg always outputs PNG (RGBA with transparency)
+    out_ext = '.png' if target_lower in REMBG_TARGETS else input_ext
+
     # Use target name as suffix to avoid conflicts
     target_suffix = f"_{args.target}"
 
     # Determine output path
     if args.output:
         base, _ = os.path.splitext(args.output)
-        output_path = f"{base}{target_suffix}{input_ext}"
+        output_path = f"{base}{target_suffix}{out_ext}"
     else:
         base, _ = os.path.splitext(args.input)
-        output_path = f"{base}{target_suffix}{input_ext}"
+        output_path = f"{base}{target_suffix}{out_ext}"
 
     # Check if output exists
     if os.path.exists(output_path) and not args.force:
@@ -119,13 +128,14 @@ def main():
         img = Image.open(args.input)
 
         if target_lower in GRAYSCALE_TARGETS:
-            # Grayscale conversion
             processed = apply_grayscale(img, args.method)
             filter_name = "grayscale"
-        else:
-            # Invert conversion
+        elif target_lower in INVERT_TARGETS:
             processed = apply_invert(img)
             filter_name = "invert"
+        elif target_lower in REMBG_TARGETS:
+            processed = apply_rembg(img, args.model)
+            filter_name = "rembg"
 
         # Resize if specified
         if args.width or args.height:
@@ -159,6 +169,8 @@ def main():
         }
         if filter_name == "grayscale":
             extra["method"] = args.method
+        elif filter_name == "rembg":
+            extra["model"] = args.model
 
         result = {
             "success": True,
@@ -195,6 +207,17 @@ def apply_grayscale(img, method):
     else:  # lightness
         img_rgb = img.convert('RGB')
         return img_rgb.convert('L')
+
+
+def apply_rembg(img, model):
+    """Remove image background using rembg."""
+    try:
+        from rembg import remove, new_session
+    except ImportError:
+        raise RuntimeError('rembg not installed. Run: pip install "rembg[cpu]"')
+
+    session = new_session(model)
+    return remove(img, session=session)
 
 
 def apply_invert(img):

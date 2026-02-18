@@ -2,7 +2,7 @@
   "name": "image-filter",
   "scope": "uniconv",
   "version": "1.0.21",
-  "description": "Apply image filters (grayscale, invert) using Python/Pillow",
+  "description": "Apply image filters (grayscale, invert, rembg) using Python/Pillow",
   "author": "uniconv",
   "license": "MIT",
   "repository": "https://github.com/uniconv/plugins",
@@ -10,6 +10,7 @@
     "image",
     "grayscale",
     "invert",
+    "rembg",
     "filter",
     "conversion"
   ],
@@ -25,6 +26,9 @@
       "png",
       "jpg",
       "webp"
+    ],
+    "rembg": [
+      "png"
     ]
   },
   "accepts": [
@@ -71,6 +75,24 @@
         "grayscale"
       ],
       "description": "Grayscale conversion method"
+    },
+    {
+      "name": "--model",
+      "type": "string",
+      "default": "u2net",
+      "choices": [
+        "u2net",
+        "u2netp",
+        "u2net_human_seg",
+        "isnet-general-use",
+        "isnet-anime",
+        "birefnet-general",
+        "silueta"
+      ],
+      "targets": [
+        "rembg"
+      ],
+      "description": "Background removal model"
     }
   ],
   "dependencies": [
@@ -85,6 +107,12 @@
       "type": "python",
       "version": ">=9.0",
       "install_hint": "pip install Pillow"
+    },
+    {
+      "name": "rembg",
+      "type": "python",
+      "optional": true,
+      "install_hint": "pip install \"rembg[cpu]\""
     }
   ]
 }
