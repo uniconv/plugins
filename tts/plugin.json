@@ -1,0 +1,191 @@
+{
+  "name": "tts",
+  "scope": "uniconv",
+  "version": "0.0.0",
+  "description": "Text-to-speech using cloud AI providers (OpenAI, ElevenLabs, Typecast, Gemini)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "tts",
+    "text-to-speech",
+    "speech",
+    "audio",
+    "openai",
+    "elevenlabs",
+    "typecast",
+    "gemini",
+    "ai"
+  ],
+  "interface": "cli",
+  "executable": "tts.py",
+  "targets": {
+    "openai": [
+      "mp3",
+      "opus",
+      "aac",
+      "flac",
+      "wav"
+    ],
+    "elevenlabs": [
+      "mp3"
+    ],
+    "typecast": [
+      "mp3",
+      "wav"
+    ],
+    "gemini": [
+      "wav"
+    ]
+  },
+  "accepts": [
+    "txt"
+  ],
+  "options": [
+    {
+      "name": "--voice",
+      "type": "string",
+      "required": false,
+      "description": "Voice name or ID for the TTS provider"
+    },
+    {
+      "name": "--model",
+      "type": "string",
+      "required": false,
+      "description": "TTS model to use"
+    },
+    {
+      "name": "--api-key",
+      "type": "string",
+      "required": false,
+      "description": "API key (overrides environment variable)"
+    },
+    {
+      "name": "--speed",
+      "type": "float",
+      "default": 1.0,
+      "min": 0.25,
+      "max": 4.0,
+      "targets": [
+        "openai"
+      ],
+      "description": "Speech speed multiplier"
+    },
+    {
+      "name": "--instructions",
+      "type": "string",
+      "required": false,
+      "targets": [
+        "openai"
+      ],
+      "description": "Additional instructions for the TTS model"
+    },
+    {
+      "name": "--stability",
+      "type": "float",
+      "default": 0.5,
+      "min": 0.0,
+      "max": 1.0,
+      "targets": [
+        "elevenlabs"
+      ],
+      "description": "Voice stability (higher = more consistent)"
+    },
+    {
+      "name": "--similarity-boost",
+      "type": "float",
+      "default": 0.75,
+      "min": 0.0,
+      "max": 1.0,
+      "targets": [
+        "elevenlabs"
+      ],
+      "description": "Voice similarity boost"
+    },
+    {
+      "name": "--style",
+      "type": "float",
+      "default": 0.0,
+      "min": 0.0,
+      "max": 1.0,
+      "targets": [
+        "elevenlabs"
+      ],
+      "description": "Style exaggeration"
+    },
+    {
+      "name": "--language",
+      "type": "string",
+      "required": false,
+      "targets": [
+        "typecast"
+      ],
+      "description": "Language code (e.g. en-us, ko-kr)"
+    },
+    {
+      "name": "--emotion",
+      "type": "string",
+      "required": false,
+      "targets": [
+        "typecast"
+      ],
+      "description": "Emotion tone preset for speech"
+    },
+    {
+      "name": "--volume",
+      "type": "int",
+      "default": 100,
+      "min": 50,
+      "max": 200,
+      "targets": [
+        "typecast"
+      ],
+      "description": "Volume percentage"
+    },
+    {
+      "name": "--pitch",
+      "type": "int",
+      "default": 0,
+      "min": -12,
+      "max": 12,
+      "targets": [
+        "typecast"
+      ],
+      "description": "Pitch shift in semitones"
+    },
+    {
+      "name": "--tempo",
+      "type": "float",
+      "default": 1.0,
+      "min": 0.5,
+      "max": 2.0,
+      "targets": [
+        "typecast"
+      ],
+      "description": "Speech tempo multiplier"
+    },
+    {
+      "name": "--seed",
+      "type": "int",
+      "required": false,
+      "targets": [
+        "typecast"
+      ],
+      "description": "Random seed for reproducible output"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "python3",
+      "type": "system",
+      "version": ">=3.8",
+      "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+    },
+    {
+      "name": "requests",
+      "type": "python",
+      "version": ">=2.20",
+      "install_hint": "pip install requests"
+    }
+  ]
+}

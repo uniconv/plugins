@@ -1,0 +1,46 @@
+{
+  "name": "tts",
+  "scope": "uniconv",
+  "description": "Text-to-speech using cloud AI providers (OpenAI, ElevenLabs, Typecast, Gemini)",
+  "author": "uniconv",
+  "license": "MIT",
+  "repository": "https://github.com/uniconv/plugins",
+  "keywords": [
+    "tts",
+    "text-to-speech",
+    "speech",
+    "audio",
+    "openai",
+    "elevenlabs",
+    "typecast",
+    "gemini",
+    "ai"
+  ],
+  "releases": [
+    {
+      "version": "1.0.0",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "cli",
+      "dependencies": [
+        {
+          "name": "python3",
+          "type": "system",
+          "version": ">=3.8",
+          "install_hint": "brew install python3 (macOS) or apt install python3 (Linux)"
+        },
+        {
+          "name": "requests",
+          "type": "python",
+          "version": ">=2.20",
+          "install_hint": "pip install requests"
+        }
+      ],
+      "artifact": {
+        "any": {
+          "url": "https://github.com/uniconv/plugins/releases/download/tts-v1.0.0/tts-1.0.0.tar.gz",
+          "sha256": ""
+        }
+      }
+    }
+  ]
+}
