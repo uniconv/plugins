@@ -1,7 +1,7 @@
 {
   "name": "tts",
   "scope": "uniconv",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Text-to-speech using cloud AI providers (OpenAI, ElevenLabs, Typecast, Gemini)",
   "author": "uniconv",
   "license": "MIT",
