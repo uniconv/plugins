@@ -38,7 +38,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/tts-v1.0.2/tts-1.0.2.tar.gz",
-          "sha256": ""
+          "sha256": "0bb48fdcd3d33635d3601f973e6ee8f675b3c7ef4a81a159e4b1f783d8d2b971"
         }
       }
     },
