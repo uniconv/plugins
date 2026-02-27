@@ -1,7 +1,7 @@
 {
   "name": "qr-code",
   "scope": "uniconv",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Generate and decode QR codes",
   "author": "uniconv",
   "license": "MIT",
