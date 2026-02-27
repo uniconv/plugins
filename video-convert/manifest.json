@@ -14,6 +14,30 @@
   ],
   "releases": [
     {
+      "version": "1.1.30",
+      "uniconv_compat": ">=0.1.0",
+      "interface": "native",
+      "dependencies": [],
+      "artifact": {
+        "linux-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.30/video-convert-1.1.30-linux-x86_64.tar.gz",
+          "sha256": ""
+        },
+        "linux-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.30/video-convert-1.1.30-linux-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "darwin-aarch64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.30/video-convert-1.1.30-darwin-aarch64.tar.gz",
+          "sha256": ""
+        },
+        "windows-x86_64": {
+          "url": "https://github.com/uniconv/plugins/releases/download/video-convert-v1.1.30/video-convert-1.1.30-windows-x86_64.tar.gz",
+          "sha256": ""
+        }
+      }
+    },
+    {
       "version": "1.1.29",
       "uniconv_compat": ">=0.1.0",
       "interface": "native",
