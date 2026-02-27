@@ -33,7 +33,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/ascii-v1.0.26/ascii-1.0.26.tar.gz",
-          "sha256": ""
+          "sha256": "134308059b3b7b1299ddf8ab36f34127041edb8d8add6071dcab4f714d8cca82"
         }
       }
     },
