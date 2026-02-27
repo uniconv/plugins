@@ -51,15 +51,15 @@
       "artifact": {
         "linux-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.32/doc-convert-1.0.32-linux-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "923c67b4d41ef5987a35681e14ec47351ae5b5de243047bde1e436c2d44951e2"
         },
         "linux-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.32/doc-convert-1.0.32-linux-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "f27c59e458017c4ae59d6e1fca5a73af7299ed1c5b6f9f8d45f2b52af87f284b"
         },
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.32/doc-convert-1.0.32-darwin-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "ff3796d5e371b471a348978c38daa22cd7f0d1f2ceaec6d428b8254278cf002f"
         },
         "windows-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/doc-convert-v1.0.32/doc-convert-1.0.32-windows-x86_64.tar.gz",
