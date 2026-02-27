@@ -21,19 +21,19 @@
       "artifact": {
         "linux-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/audio-convert-v1.1.28/audio-convert-1.1.28-linux-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "315c36e599e08423f1e162bee57b7ca6bcfda4d7995be8519e816552683204d8"
         },
         "linux-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/audio-convert-v1.1.28/audio-convert-1.1.28-linux-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "058fe1040778eedca76593ceb93bc7380c560934a0067600e4ea1b4fc5081743"
         },
         "darwin-aarch64": {
           "url": "https://github.com/uniconv/plugins/releases/download/audio-convert-v1.1.28/audio-convert-1.1.28-darwin-aarch64.tar.gz",
-          "sha256": ""
+          "sha256": "ce311e3e083d9cd82ece12ece6a0b5ecfe988c5ceac0d77643cdcdb9959e421e"
         },
         "windows-x86_64": {
           "url": "https://github.com/uniconv/plugins/releases/download/audio-convert-v1.1.28/audio-convert-1.1.28-windows-x86_64.tar.gz",
-          "sha256": ""
+          "sha256": "c6134fc240ced1baac1bd08bf52d82dd1a8fdff56dcdc52f9d0a783442d1a9dd"
         }
       }
     },
