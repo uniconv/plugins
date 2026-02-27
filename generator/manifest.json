@@ -44,7 +44,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/generator-v1.0.18/generator-1.0.18.tar.gz",
-          "sha256": ""
+          "sha256": "ceb8b39408f5dfa861193380f4384d8ed7012cab83551f8c02772bea16aa4821"
         }
       }
     },
