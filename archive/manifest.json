@@ -35,7 +35,7 @@
       "artifact": {
         "any": {
           "url": "https://github.com/uniconv/plugins/releases/download/archive-v1.0.22/archive-1.0.22.tar.gz",
-          "sha256": ""
+          "sha256": "d43eca302488e54b9f8f073c08882573aa10bf815cc5007923e0ba886c8cb037"
         }
       }
     },
